@@ -1,0 +1,29 @@
+{
+  "name": "@cwfe/utils",
+  "version": "1.0.0",
+  "description": "长为数据工具库",
+  "main": "./src/index.js",
+  "repository": "https://github.com/CWFE/utils.git",
+  "author": "喵大快救我 <wang0122xl@163.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "webpack-dev-server --open development",
+    "prepublishOnly": "tsc"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.10.2",
+    "@types/react": "^16.9.35",
+    "@types/react-dom": "^16.9.8",
+    "babel-loader": "^8.1.0",
+    "css-loader": "^3.5.3",
+    "html-webpack-plugin": "^4.3.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "style-loader": "^1.2.1",
+    "ts-loader": "^7.0.5",
+    "typescript": "^3.9.5",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.11.0"
+  }
+}

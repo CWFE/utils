@@ -1,0 +1,25 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "declaration": true,
+    "outDir": "src",
+    "sourceMap":  false,
+    "noImplicitAny": true,
+    "module": "CommonJS",
+    "esModuleInterop": true,
+    "target": "ES6",
+    "jsx": "react",
+    "allowJs": true,
+    "lib": [
+      "ES2015",
+      "DOM"
+    ],
+    "noEmit": false
+  },
+  "include": [
+    "libs"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
