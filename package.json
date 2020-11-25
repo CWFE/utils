@@ -1,6 +1,6 @@
 {
   "name": "@cwfe/utils",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "长为数据工具库",
   "main": "./src/index.js",
   "repository": "https://github.com/CWFE/utils.git",
