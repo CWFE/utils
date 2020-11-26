@@ -21,6 +21,11 @@ const tsRule = {
   use: 'ts-loader',
   exclude: /node_modules/
 }
+const eslintRule = {
+  test: /\.ts(x?)$/,
+  use: 'eslint-loader',
+  exclude: /node_modules/
+}
 
 module.exports = {
   entry: path.resolve(__dirname, 'example/src/index.tsx'),
@@ -29,7 +34,7 @@ module.exports = {
     filename: 'bundle.js'
   },
   module: {
-    rules: [jsRule, tsRule, cssRule]
+    rules: [eslintRule, jsRule, tsRule, cssRule]
   },
   plugins: [htmlWebpackPlugin],
   resolve: {
