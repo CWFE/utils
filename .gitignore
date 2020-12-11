@@ -6,3 +6,4 @@ example/dist
 yarn-error.log
 
 packages/*/node_modules
+packages/*/src
