@@ -1,6 +1,6 @@
 {
     "name": "@cwfe/utils",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "main": "./src",
     "module": "./libs",
     "author": "喵大快救我 <wang0122xl@163.com>",
@@ -12,8 +12,8 @@
     },
     "scripts": {
         "prepare": "rm -rf src && tsc"
-      },
-      "publishConfig": {
-          "access": "public"
-      }
+    },
+    "publishConfig": {
+        "access": "public"
+    }
 }
