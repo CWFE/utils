@@ -1,8 +1,7 @@
 {
     "name": "@cwfe/utils",
     "version": "0.0.2",
-    "main": "./src",
-    "module": "./libs",
+    "main": "./src/index.js",
     "author": "喵大快救我 <wang0122xl@163.com>",
     "repository": "https://github.com/CWFE/utils.git",
     "private": false,
@@ -11,7 +10,7 @@
         "ramda": "^0.27.1"
     },
     "scripts": {
-        "prepare": "rm -rf src && tsc"
+        "prepublishOnly": "rm -rf src && tsc"
     },
     "publishConfig": {
         "access": "public"
