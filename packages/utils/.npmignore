@@ -1,10 +1,2 @@
-node_modules
-.DS_Store
-.eslintrc
-.babelrc
-postcss.config.js
-tsconfig.json
-webpack.config.js
-example
 libs
 .history
