@@ -26,7 +26,7 @@ class Request {
             // 判断缓存中是否有相同请求
             const cancelTokenKey = this.getCancelTokenKey(config)
             if (this.cancelTokenSources[cancelTokenKey]) {
-                // this.cancelTokenSources[cancelTokenKey]()
+                this.cancelTokenSources[cancelTokenKey]()
             }
             config.cancelToken = config.cancelToken || new Axios.CancelToken(c => {
                 this.cancelTokenSources[cancelTokenKey] = c
