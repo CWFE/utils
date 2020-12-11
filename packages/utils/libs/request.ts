@@ -1,11 +1,10 @@
 import Axios, { AxiosRequestConfig, Canceler } from 'axios'
-import * as R from 'ramda'
 
 class Request {
     public cancelTokenSources: {
         [url: string]: Canceler
     } = {}
-    public getCancelTokenKey = (config: Readonly<AxiosRequestConfig>) => {
+    public getCancelTokenKey = (config: Readonly<AxiosRequestConfig>) => { 
         return (config.method || 'GET')?.toUpperCase() + '?' + config.url as string + JSON.stringify(config.data) + JSON.stringify(config.params)
     }
     public request = async function AxiosRequest (config: AxiosRequestConfig, retryCount?: number): Promise<any> {

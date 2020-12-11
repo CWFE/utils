@@ -17,7 +17,7 @@
     "noEmit": false
   },
   "include": [
-    "libs"
+    "packages/**/*"
   ],
   "exclude": [
     "node_modules"

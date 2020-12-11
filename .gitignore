@@ -5,3 +5,5 @@ src
 .history
 
 yarn-error.log
+
+packages/*/node_modules

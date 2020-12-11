@@ -1,0 +1,19 @@
+{
+    "name": "@cwfe/utils",
+    "version": "0.0.1",
+    "main": "./src",
+    "module": "./libs",
+    "author": "喵大快救我 <wang0122xl@163.com>",
+    "repository": "https://github.com/CWFE/utils.git",
+    "private": false,
+    "dependencies": {
+        "axios": "^0.21.0",
+        "ramda": "^0.27.1"
+    },
+    "scripts": {
+        "prepare": "rm -rf src && tsc"
+      },
+      "publishConfig": {
+          "access": "public"
+      }
+}
