@@ -1,16 +1,18 @@
 import Axios, { AxiosRequestConfig, Canceler } from 'axios'
 
+export const axiosInstance = Axios.create()
+
 class Request {
     public cancelTokenSources: {
         [url: string]: Canceler
     } = {}
-    public getCancelTokenKey = (config: Readonly<AxiosRequestConfig>) => { 
+    public getCancelTokenKey = (config: Readonly<AxiosRequestConfig>) => {
         return (config.method || 'GET')?.toUpperCase() + '?' + config.url as string + JSON.stringify(config.data) + JSON.stringify(config.params)
     }
     public request = async function AxiosRequest (config: AxiosRequestConfig, retryCount?: number): Promise<any> {
         try {
             // 执行
-            const response = await Axios(config)    
+            const response = await axiosInstance(config)
             return Promise.resolve(response)
         } catch (error) {
             if ((!retryCount || retryCount <= 0) || Axios.isCancel(error)) {
@@ -22,7 +24,7 @@ class Request {
     }
 
     constructor () {
-        Axios.interceptors.request.use(config => {
+        axiosInstance.interceptors.request.use(config => {
             // 判断缓存中是否有相同请求
             const cancelTokenKey = this.getCancelTokenKey(config)
             if (this.cancelTokenSources[cancelTokenKey]) {
@@ -39,3 +41,4 @@ class Request {
 }
 
 export const RequestInstance = new Request()
+export default Axios

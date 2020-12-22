@@ -6,7 +6,7 @@
   "license": "MIT",
   "private": true,
   "workspaces": [
-      "packages/*"
+    "packages/*"
   ],
   "scripts": {
     "bootstrap": "lerna bootstrap --use-workspaces",
@@ -37,8 +37,11 @@
     "webpack-dev-server": "^3.11.0"
   },
   "peerDependencies": {
+    "axios": "^0.21.0",
     "react": ">=16.8.0",
-    "react-dom": ">=16.8.0",
-    "axios": "^0.21.0"
+    "react-dom": ">=16.8.0"
+  },
+  "dependencies": {
+    "ahooks": "^2.9.2"
   }
 }
