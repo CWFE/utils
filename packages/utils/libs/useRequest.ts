@@ -64,7 +64,7 @@ export function useRequest<T> ({
                 RequestInstance.cancelTokenSources[key]()
             }
         }
-    }, [params])
+    }, [RequestInstance.getCancelTokenKey(params)])
 
     return {
         result: result,
