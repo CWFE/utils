@@ -8,12 +8,15 @@ type UseRequestProps = {
     manual?: boolean,
     retry?: number,
     cancelCallback?: (e: Error) => void
+    // 设置是否继续抛出错误
+    needError?: boolean
 }
 
 export type RequestLoadData = (options?: AxiosRequestConfig, retryCount?: number) => Promise<unknown>
 
 interface returnValue<T> {
     result?: T
+    setResult: React.Dispatch<any>
     loadData: RequestLoadData
     msg: string
     loading: boolean
@@ -24,7 +27,8 @@ interface returnValue<T> {
 export function useRequest<T> ({
     params = { url: '', method: 'GET' },
     manual = false,
-    retry = 0
+    retry = 0,
+    needError = false
 }: UseRequestProps, depths?: unknown[], cancelCallback?: (e: Error) => void): returnValue<T> {
     const [result, setResult] = useState<T>()
     const [loading, setLoading] = useState(false)
@@ -40,6 +44,7 @@ export function useRequest<T> ({
             setResult(data)
             setMsg(resMsg)
             setErr(undefined)
+            return data
         } catch (e) {
             if (Axios.isCancel(e)) {
                 cancelCallback && cancelCallback(e)
@@ -47,6 +52,9 @@ export function useRequest<T> ({
                 setLoading(false)
                 setResult(undefined)
                 setErr(new Error(e.message))
+                if (needError) {
+                    return Promise.reject(new Error(e.message))
+                }
             }
         }
     })
@@ -60,14 +68,13 @@ export function useRequest<T> ({
     useEffect(() => {
         return () => {
             const key = RequestInstance.getCancelTokenKey(params)
-            if (RequestInstance.cancelTokenSources[key]) {
-                RequestInstance.cancelTokenSources[key]()
-            }
+            RequestInstance.cancelTokenSources[key]?.()
         }
-    }, [params])
+    }, [])
 
     return {
         result: result,
+        setResult,
         loadData: loadData,
         loading: loading,
         err: err,
