@@ -1,4 +1,4 @@
-import Axios, { AxiosRequestConfig, Canceler } from 'axios'
+import Axios, { AxiosRequestConfig, AxiosResponse, Canceler } from 'axios'
 
 export const axiosInstance = Axios.create()
 
@@ -9,7 +9,7 @@ class Request {
     public getCancelTokenKey = (config: Readonly<AxiosRequestConfig>) => {
         return (config.method || 'GET')?.toUpperCase() + '?' + config.url as string + JSON.stringify(config.data) + JSON.stringify(config.params)
     }
-    public request = async function AxiosRequest (config: AxiosRequestConfig, retryCount?: number): Promise<any> {
+    public request = async function AxiosRequest<T = any> (config: AxiosRequestConfig, retryCount?: number): Promise<AxiosResponse<T>> {
         try {
             // 执行
             const response = await axiosInstance(config)

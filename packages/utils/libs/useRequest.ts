@@ -18,7 +18,6 @@ interface returnValue<T> {
     result?: T
     setResult: React.Dispatch<any>
     loadData: RequestLoadData
-    msg: string
     loading: boolean
     err?: Error
     isCancel?: boolean
@@ -33,16 +32,14 @@ export function useRequest<T> ({
     const [result, setResult] = useState<T>()
     const [loading, setLoading] = useState(false)
     const [err, setErr] = useState<Error>()
-    const [msg, setMsg] = useState<string>('')
 
     const loadData = usePersistFn(async (options?: Partial<AxiosRequestConfig>, retryCount?: number) => {
         setLoading(true)
         const realParams: AxiosRequestConfig = Object.assign(options || {}, params)
         try {
-            const { data, msg: resMsg } = await RequestInstance.request(realParams, retryCount)
+            const { data } = await RequestInstance.request<T>(realParams, retryCount)
             setLoading(false)
             setResult(data)
-            setMsg(resMsg)
             setErr(undefined)
             return data
         } catch (e) {
@@ -77,7 +74,6 @@ export function useRequest<T> ({
         setResult,
         loadData: loadData,
         loading: loading,
-        err: err,
-        msg: msg
+        err: err
     }
 }
