@@ -1,0 +1,48 @@
+#print-container {
+    background-color: #EAEAEA;
+    z-index: 1000;
+
+    &::after {
+        content: '';
+        display: block;
+        height: 1px;
+    }
+}
+
+.action-layer {
+    background-color: #EAEAEA;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 10vh;
+}
+
+.print-layer {
+    margin: 0 auto 10vh;
+    box-sizing: border-box;
+    width: 60vw;
+    min-height: 100vh;
+    background-color: white;
+    word-wrap: break-word;
+    padding: 10vh 6vw;
+}
+
+@media print {
+    @page {
+        margin: 3.7cm 2.6cm 3.5cm;
+    }
+    #print-container {
+        &::after {
+            display: none;
+        }
+    }
+    .action-layer {
+        display: none;
+    }
+
+    .print-layer {
+        width: 100vw;
+        padding: 0;
+    }
+}
