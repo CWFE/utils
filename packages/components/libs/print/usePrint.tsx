@@ -1,6 +1,6 @@
 import React, { PropsWithChildren } from 'react'
 import ReactDOM from 'react-dom'
-import PrintContainer, { PrintContainerProps } from 'cwfe/packages/components/libs/print'
+import PrintContainer, { PrintContainerProps } from './index'
 import _ from 'lodash'
 
 export interface usePrintProps extends PrintContainerProps {

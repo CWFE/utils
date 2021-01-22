@@ -6,7 +6,9 @@
     "repository": "https://github.com/CWFE/utils.git",
     "private": false,
     "dependencies": {
+        "antd": "^4.10.3",
         "ramda": "^0.27.1",
+        "react-img-editor": "^0.2.0",
         "styled-components": "^5.2.1"
     },
     "resolutions": {
@@ -19,6 +21,7 @@
         "access": "public"
     },
     "devDependencies": {
+        "@types/antd": "^1.0.0",
         "@types/styled-components": "^5.1.7"
     }
 }
