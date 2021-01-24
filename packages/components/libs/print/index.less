@@ -2,6 +2,11 @@
     background-color: #EAEAEA;
     z-index: 1000;
 
+    &::before {
+        content: '';
+        display: block;
+        height: 1px;
+    }
     &::after {
         content: '';
         display: block;
@@ -10,7 +15,6 @@
 }
 
 .action-layer {
-    background-color: #EAEAEA;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -19,21 +23,24 @@
 }
 
 .print-layer {
-    margin: 0 auto 10vh;
+    margin: 10vh auto 3vh;
     box-sizing: border-box;
     width: 60vw;
     min-height: 100vh;
     background-color: white;
     word-wrap: break-word;
-    padding: 10vh 6vw;
+    padding: 0.4cm 0.5cm;
 }
 
 @media print {
     @page {
-        margin: 3.7cm 2.6cm 3.5cm;
+        margin: 1cm 0.9cm;
     }
     #print-container {
         &::after {
+            display: none;
+        }
+        &::before {
             display: none;
         }
     }
@@ -44,5 +51,6 @@
     .print-layer {
         width: 100vw;
         padding: 0;
+        margin-top: 0;
     }
 }

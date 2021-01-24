@@ -1,6 +1,9 @@
 import React from 'react'
 import './index.less'
+import { Button } from 'antd'
 
+import html2canvas from 'html2canvas'
+import jspdf from 'jspdf'
 export interface PrintContainerProps {
     onCancel?: () => void
     nodes: React.FC[]
@@ -8,6 +11,17 @@ export interface PrintContainerProps {
 }
 
 const PrintContainer = (props: PrintContainerProps) => {
+    const [ready, setReady] = React.useState(false)
+
+    React.useEffect(() => {
+        const timeout = setTimeout(() => {
+            setReady(true)
+        }, 1000)
+        return () => {
+            clearTimeout(timeout)
+        }
+    }, [])
+
     const _cancle = () => {
         props.onCancel && props.onCancel()
     }
@@ -20,12 +34,9 @@ const PrintContainer = (props: PrintContainerProps) => {
             return true
         }
     }, [props.afterPrint])
+    
     return (
         <div id='print-container'>
-            <div className='action-layer'>
-                <p onClick={_cancle}>取消</p>
-                <p onClick={_print}>打印</p>
-            </div>
             {
                 props.nodes.map((T, idx) => {
                     return (
@@ -35,6 +46,11 @@ const PrintContainer = (props: PrintContainerProps) => {
                     )
                 })
             }
+
+            <div className='action-layer'>
+                <Button onClick={_cancle} style={{ marginRight: '20px' }}>取消</Button>
+                <Button disabled={!ready} type='primary' onClick={_print}>打印</Button>
+            </div>
         </div>
     )
 }

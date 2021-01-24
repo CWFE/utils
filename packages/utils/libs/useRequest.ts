@@ -43,11 +43,12 @@ export function useRequest<T> ({
             setErr(undefined)
             return data
         } catch (e) {
+            setLoading(false)
+            setResult(undefined)
+
             if (Axios.isCancel(e)) {
                 cancelCallback && cancelCallback(e)
             } else {
-                setLoading(false)
-                setResult(undefined)
                 setErr(new Error(e.message))
                 if (needError) {
                     return Promise.reject(new Error(e.message))
