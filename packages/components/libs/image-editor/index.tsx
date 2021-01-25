@@ -78,7 +78,7 @@ class CustomImageEditor extends React.Component<CustomImageEditorProps, CustomIm
                 destroyOnClose
                 onCancel={this.hide.bind(this)}
                 onOk={this.handleOk.bind(this)}
-                className='flex items-center justify-center'
+                className='flex items-center justify-center fixed top-0 left-0 bottom-0 right-0'
             >
                 <Spin spinning={this.state.loading}>
                     <ReactImageEditor

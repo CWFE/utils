@@ -16,7 +16,7 @@ const PrintContainer = (props: PrintContainerProps) => {
     React.useEffect(() => {
         const timeout = setTimeout(() => {
             setReady(true)
-        }, 1000)
+        }, 2000)
         return () => {
             clearTimeout(timeout)
         }
