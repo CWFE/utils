@@ -40,7 +40,7 @@ const usePrint = (props: usePrintProps) => {
                     const printLayer = document.getElementsByClassName('print-layer')[0] as HTMLElement
                     printLayer && html2canvas(printLayer, {
                         useCORS: true,
-                        x: printLayer.offsetLeft + window.screenLeft,
+                        x: printLayer.offsetLeft,
                         y: printLayer.offsetTop,
                         scrollY: printLayer.scrollTop
                     }).then(function(canvas) {

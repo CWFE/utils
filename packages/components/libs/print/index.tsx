@@ -1,9 +1,6 @@
 import React from 'react'
 import './index.less'
 import { Button } from 'antd'
-
-import html2canvas from 'html2canvas'
-import jspdf from 'jspdf'
 export interface PrintContainerProps {
     onCancel?: () => void
     nodes: React.FC[]
@@ -16,7 +13,7 @@ const PrintContainer = (props: PrintContainerProps) => {
     React.useEffect(() => {
         const timeout = setTimeout(() => {
             setReady(true)
-        }, 2000)
+        }, 5000)
         return () => {
             clearTimeout(timeout)
         }
@@ -40,7 +37,7 @@ const PrintContainer = (props: PrintContainerProps) => {
             {
                 props.nodes.map((T, idx) => {
                     return (
-                        <div className='print-layer' key={`print-item-${idx}`} >
+                        <div className='print-layer' style={{ pageBreakAfter: 'always' }} key={`print-item-${idx}`} >
                             <T />
                         </div>
                     )
