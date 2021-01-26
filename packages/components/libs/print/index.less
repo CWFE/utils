@@ -34,7 +34,11 @@
 
 @media print {
     @page {
-        margin: 1cm 0.9cm;
+        margin: 0 0.9cm;
+        margin-bottom: 1cm;
+    }
+    body {
+        padding-top: 1cm;
     }
     #print-container {
         &::after {
