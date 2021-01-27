@@ -1,6 +1,12 @@
 #print-container {
     background-color: #EAEAEA;
     z-index: 1000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
 
     &::before {
         content: '';
@@ -26,7 +32,6 @@
     margin: 10vh auto 3vh;
     box-sizing: border-box;
     width: 60vw;
-    min-height: 100vh;
     background-color: white;
     word-wrap: break-word;
     padding: 0.4cm 0.5cm;
@@ -34,13 +39,14 @@
 
 @media print {
     @page {
-        margin: 0 0.9cm;
-        margin-bottom: 1cm;
-    }
-    body {
-        padding-top: 1cm;
+        margin: 1cm 1.7cm 1cm 1.5cm;
     }
     #print-container {
+        position: static;
+        top: auto;
+        left: auto;
+        right: auto;
+        bottom: auto;
         &::after {
             display: none;
         }
@@ -56,5 +62,6 @@
         width: 100vw;
         padding: 0;
         margin-top: 0;
+        position: relative;
     }
 }
