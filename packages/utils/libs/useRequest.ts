@@ -4,7 +4,7 @@ import { RequestInstance } from './request'
 import { usePersistFn } from 'ahooks'
 
 type UseRequestProps = {
-    params: AxiosRequestConfig
+    params: AxiosRequestConfig & { needLoading?: boolean } | any
     manual?: boolean,
     retry?: number,
     cancelCallback?: (e: Error) => void

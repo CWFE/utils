@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react'
+import React  from 'react'
 import ReactDOM from 'react-dom'
 import PrintContainer, { PrintContainerProps } from './index'
 import _ from 'lodash'
