@@ -49,16 +49,21 @@ const PrintContainer = (props: PrintContainerProps) => {
         setLoading(true)
         props.downloadCallback && props.downloadCallback('begin')
         const printLayer = document.getElementsByClassName('print-layer')[0] as HTMLElement
-        document.getElementById('print-container').scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        })
+        const container = document.getElementById('print-container')
+        // // document.getElementById('print-container').scrollTo({
+        // //     top: 0,
+        // //     behavior: 'smooth'
+        // // })
+        // window.scrollTo({
+        //     top: 0,
+        //     behavior: 'smooth'
+        // })
         setTimeout(() => {
             printLayer && html2canvas(printLayer, {
                 useCORS: true,
                 x: printLayer.offsetLeft,
                 y: printLayer.offsetTop,
-                scrollY: printLayer.scrollTop
+                scrollY: container.scrollTop
             }).then(function(canvas) {
                 const contentWidth = canvas.width / 2
                 const contentHeight = canvas.height / 2

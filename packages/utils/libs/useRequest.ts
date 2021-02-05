@@ -51,7 +51,7 @@ export function useRequest<T> ({
             } else {
                 setErr(new Error(e.message))
                 if (needError) {
-                    return Promise.reject(new Error(e.message))
+                    throw e
                 }
             }
         }
@@ -73,7 +73,7 @@ export function useRequest<T> ({
     return {
         result: result,
         setResult,
-        loadData: loadData,
+        loadData,
         loading: loading,
         err: err
     }
