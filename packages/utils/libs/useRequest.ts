@@ -37,10 +37,14 @@ export function useRequest<T> ({
         setLoading(true)
         const realParams: AxiosRequestConfig = Object.assign(options || {}, params)
         try {
-            const { data } = await RequestInstance.request<T>(realParams, retryCount)
+            const response = await RequestInstance.request<T>(realParams, retryCount)
+            const {data} = response
             setLoading(false)
             setResult(data)
             setErr(undefined)
+            if (Object.prototype.toString.call(data) === '[object Blob]') {
+                return response
+            }
             return data
         } catch (e) {
             setLoading(false)
