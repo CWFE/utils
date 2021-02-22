@@ -1,5 +1,4 @@
 import React from 'react'
-import './index.less'
 import { Button, Spin } from 'antd'
 import { PropsWithChildren } from 'react'
 import useGeneratePDF from './generatePDF'
@@ -20,7 +19,6 @@ const PDFPreview = (props: PDFPreviewProps) => {
         previewType = 'print',
         afterPrint = () => {},
     } = props
-    const [ready, setReady] = React.useState(false)
     const [loading, setLoading] = React.useState(false)
 
     const { download, print } = useGeneratePDF({
@@ -41,15 +39,6 @@ const PDFPreview = (props: PDFPreviewProps) => {
         //         .text(`第${pdf.getCurrentPageInfo().pageNumber}页`, size.width - 42, 10)
         // }
     })
-
-    React.useEffect(() => {
-        const timeout = setTimeout(() => {
-            setReady(true)
-        }, 2000)
-        return () => {
-            clearTimeout(timeout)
-        }
-    }, [])
 
     React.useEffect(() => {
         window.onafterprint = (e: Event) => {
@@ -74,7 +63,7 @@ const PDFPreview = (props: PDFPreviewProps) => {
 
                 <div className='action-layer'>
                     <Button onClick={props.onCancel} style={{ marginRight: '20px' }}>取消</Button>
-                    <Button disabled={!ready} type='primary' onClick={previewType === 'print' ? print : download}>{previewType === 'print' ? '打印' : '下载'}</Button>
+                    <Button type='primary' onClick={previewType === 'print' ? print : download}>{previewType === 'print' ? '打印' : '下载'}</Button>
                 </div>
             </Spin>
         </div>

@@ -111,13 +111,14 @@ const useGeneratePDF = (props: {
                 useCORS: true,
                 scale: 2
             })
+            console.log('---', ele)
             const imgData = canvas.toDataURL('image/jpeg', 1.0)
+            console.log(imgData.substr(0, 20))
             pdf.addImage(imgData, 'JPEG', padding.x, positionTop + padding.y.top, pageSize.width - 2 * padding.x, actualEleHeight)
         }
     }
     const makePDF = async (pdf: jspdf, ele: HTMLElement) => {
         currentPage = 1
-
         pdf.addFileToVFS('heiti.ttf', heitiString)
         pdf.addFont('heiti.ttf', 'heiti', 'normal')
         pdf.setFont('heiti')
