@@ -111,8 +111,7 @@ const useGeneratePDF = (props: {
                 useCORS: true,
                 scale: 2
             })
-            console.log('---', ele)
-            const imgData = canvas.toDataURL('image/jpeg', 1.0)
+            const imgData = canvas.toDataURL('image/jpeg')
             console.log(imgData.substr(0, 20))
             pdf.addImage(imgData, 'JPEG', padding.x, positionTop + padding.y.top, pageSize.width - 2 * padding.x, actualEleHeight)
         }
