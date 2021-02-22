@@ -38,6 +38,7 @@ const useGeneratePDF = (props: {
     titles?: string[]
     needHeader?: boolean
     needFooter?: boolean
+    separate?: boolean // 多pdf是否单独生成
     downloadCallback?: (status: DownloadStatus) => void
     padding?: {
         x: number
@@ -47,8 +48,8 @@ const useGeneratePDF = (props: {
             headerBottom: number
         }
     }
-    renderPageHeader?: (pdf: jspdf, size: PageSize) => void
-    renderPageFooter?: (pdf: jspdf, size: PageSize) => void
+    renderPageHeader?: (pdf: jspdf, currentPage: number) => void
+    renderPageFooter?: (pdf: jspdf, currentPage: number) => void
 }) => {
     const {
         padding = {
@@ -68,6 +69,7 @@ const useGeneratePDF = (props: {
     }
 
     let remainOffsetTop = 0
+    let currentPage = 1
 
     const pdfAddEle = async (pdf: jspdf, ele: HTMLElement, isHeader?: boolean, isFooter?: boolean): Promise<any> => {
         const headerEle = ele.parentElement.children[0] as HTMLElement
@@ -84,7 +86,7 @@ const useGeneratePDF = (props: {
             positionTop = pageSize.height - (padding.y.top + padding.y.bottom) - ele.clientHeight
         } else {
             const headerBottom = acturalLength(headerEle.offsetTop - ele.parentElement.offsetTop, ele.clientWidth) + acturalLength(headerEle.clientHeight, headerEle.clientWidth)
-            positionTop = acturalOffsetTop - (pdf.getNumberOfPages() - 1) * pageSize.height + headerBottom * ((props.needHeader ? pdf.getNumberOfPages() : 1) - 1) + remainOffsetTop
+            positionTop = acturalOffsetTop - (currentPage - 1) * pageSize.height + headerBottom * ((props.needHeader ? currentPage : 1) - 1) + remainOffsetTop
         }
 
         let totalHeight = positionTop + actualEleHeight + padding.y.top + padding.y.bottom
@@ -92,10 +94,11 @@ const useGeneratePDF = (props: {
             if (props.needFooter) {
                 await pdfAddEle(pdf, footerEle, false, true)
             }
-            props.renderPageFooter && props.renderPageFooter(pdf, pageSize)
-            props.renderPageHeader && props.renderPageHeader(pdf, pageSize)
+            props.renderPageFooter && props.renderPageFooter(pdf, currentPage)
+            props.renderPageHeader && props.renderPageHeader(pdf, currentPage)
 
             pdf.addPage()
+            currentPage += 1
             remainOffsetTop += pageSize.height - positionTop
             if (props.needHeader) {
                 remainOffsetTop += padding.y.headerBottom
@@ -112,15 +115,16 @@ const useGeneratePDF = (props: {
             pdf.addImage(imgData, 'JPEG', padding.x, positionTop + padding.y.top, pageSize.width - 2 * padding.x, actualEleHeight)
         }
     }
-    const makePDF = async (ele: HTMLElement) => {
-        const pdf = new jspdf('p', 'pt', props.sizeType)
+    const makePDF = async (pdf: jspdf, ele: HTMLElement) => {
+        currentPage = 1
+
         pdf.addFileToVFS('heiti.ttf', heitiString)
         pdf.addFont('heiti.ttf', 'heiti', 'normal')
         pdf.setFont('heiti')
         remainOffsetTop = 0
-        pdfAddEle(pdf, ele.children[0] as HTMLElement, true)
-        props.renderPageFooter && props.renderPageFooter(pdf, pageSize)
-        props.renderPageHeader && props.renderPageHeader(pdf, pageSize)
+        await pdfAddEle(pdf, ele.children[0] as HTMLElement, true)
+        props.renderPageFooter && props.renderPageFooter(pdf, currentPage)
+        props.renderPageHeader && props.renderPageHeader(pdf, currentPage)
 
         for (let i = 0; i < ele.children.length; i++) {
             const childEle = ele.children[i] as HTMLElement
@@ -133,17 +137,30 @@ const useGeneratePDF = (props: {
             await pdfAddEle(pdf, childEle)
         }
         await pdfAddEle(pdf, ele.children[ele.children.length - 1] as HTMLElement, false, true)
-        props.renderPageHeader && props.renderPageHeader(pdf, pageSize)
-        props.renderPageFooter && props.renderPageFooter(pdf, pageSize)
+        props.renderPageHeader && props.renderPageHeader(pdf, currentPage)
+        props.renderPageFooter && props.renderPageFooter(pdf, currentPage)
 
         return pdf
     }
     
     const makePDFs = async () => {
         const pdfs: jspdf[] = []
+        let pdf: jspdf = new jspdf('p', 'pt', props.sizeType)
+
         for (let i = 0; i < props.elementIds.length; i++) {
+            if (props.separate) {
+                pdf = new jspdf('p', 'pt', props.sizeType)
+            }
             const ele = document.getElementById(props.elementIds[i])
-            const pdf = await makePDF(ele)
+            await makePDF(pdf, ele)
+            if (i !== props.elementIds.length - 1 && !props.separate) {
+                pdf.addPage()
+            }
+            if (props.separate) {
+                pdfs.push(pdf)
+            }
+        }
+        if (!props.separate) {
             pdfs.push(pdf)
         }
         return pdfs
@@ -168,11 +185,14 @@ const useGeneratePDF = (props: {
         props.downloadCallback && props.downloadCallback('begin')
         try {
             const pdfs = await makePDFs()
+            console.log(pdfs, '----')
+
             for (let i = 0; i < pdfs.length; i++) {
                 const pdf = pdfs[i]
                 const iframe = document.createElement('iframe')
                 const url = URL.createObjectURL(pdf.output('blob'))
                 iframe.src = url
+                document.body.appendChild(iframe)
                 iframe.contentWindow.print()
             }
             

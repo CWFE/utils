@@ -28,11 +28,11 @@ const PDFPreview = (props: PDFPreviewProps) => {
         downloadCallback: status => setLoading(status === 'begin'),
         needHeader: props.needHeader || true,
         needFooter: props.needFooter || true,
-        renderPageFooter: (pdf, size) => {
+        renderPageFooter: (pdf, currentPage) => {
             pdf
                 .setTextColor('#111')
                 .setFontSize(8)
-                .text(`第${pdf.getCurrentPageInfo().pageNumber}页`, pdf.internal.pageSize.getWidth() - 42, pdf.internal.pageSize.getHeight() - 12)
+                .text(`第${currentPage}页`, pdf.internal.pageSize.getWidth() - 42, pdf.internal.pageSize.getHeight() - 12)
         },
         // renderPageHeader: (pdf, size) => {
         //     pdf
