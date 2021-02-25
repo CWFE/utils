@@ -23,12 +23,12 @@ type PDFSizeType = 'a4' | 'a5'
 
 const getSize = (sizeType?: PDFSizeType) => {
     switch (sizeType) {
-        case 'a4':
-            return A4Size
-        case 'a5':
-            return A5Size
-        default:
-            return A4Size
+    case 'a4':
+        return A4Size
+    case 'a5':
+        return A5Size
+    default:
+        return A4Size
     }
 }
 
@@ -53,7 +53,7 @@ const useGeneratePDF = (props: {
 }) => {
     const {
         padding = {
-            x: 20,
+            x: 30,
             y: {
                 top: 15,
                 bottom: 10,
@@ -89,7 +89,7 @@ const useGeneratePDF = (props: {
             positionTop = acturalOffsetTop - (currentPage - 1) * pageSize.height + headerBottom * ((props.needHeader ? currentPage : 1) - 1) + remainOffsetTop
         }
 
-        let totalHeight = positionTop + actualEleHeight + padding.y.top + padding.y.bottom
+        const totalHeight = positionTop + actualEleHeight + padding.y.top + padding.y.bottom
         if (totalHeight + (props.needFooter ? footerEle.clientHeight : 0) > pageSize.height && !isHeader && !isFooter) {
             if (props.needFooter) {
                 await pdfAddEle(pdf, footerEle, false, true)
@@ -185,14 +185,16 @@ const useGeneratePDF = (props: {
         props.downloadCallback && props.downloadCallback('begin')
         try {
             const pdfs = await makePDFs()
-            console.log(pdfs, '----')
 
             for (let i = 0; i < pdfs.length; i++) {
+                const w = window.open()
+
                 const pdf = pdfs[i]
                 const iframe = document.createElement('iframe')
+                iframe.hidden = true
                 const url = URL.createObjectURL(pdf.output('blob'))
                 iframe.src = url
-                document.body.appendChild(iframe)
+                w.document.body.appendChild(iframe)
                 iframe.contentWindow.print()
             }
             
