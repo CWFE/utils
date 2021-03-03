@@ -35,7 +35,10 @@ export function useRequest<T> ({
 
     const loadData = usePersistFn(async (options?: Partial<AxiosRequestConfig>, retryCount?: number) => {
         setLoading(true)
-        const realParams: AxiosRequestConfig = Object.assign(options || {}, params)
+        const realParams: AxiosRequestConfig = Object.assign(options || {}, params || {})
+        if (!realParams.url?.length) {
+            return
+        }
         try {
             const response = await RequestInstance.request<T>(realParams, retryCount)
             const {data} = response

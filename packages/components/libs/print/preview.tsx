@@ -2,14 +2,17 @@ import React from 'react'
 import { Button, Spin } from 'antd'
 import { PropsWithChildren } from 'react'
 import useGeneratePDF from './generatePDF'
+import jsPDF from 'jspdf'
 
 export interface PDFPreviewProps extends PropsWithChildren<any> {
     onCancel: () => void
     afterPrint?: () => void
+    done?: (pdfs: jsPDF[]) => void
     previewType?: PDFPreviewType
     needHeader?: boolean
     needFooter?: boolean
     paddingX?: number
+    pdfUrls?: string[]
 }
 
 export type PDFPreviewType = 'download' | 'print'
@@ -23,7 +26,12 @@ const PDFPreview = (props: PDFPreviewProps) => {
 
     const { download, print } = useGeneratePDF({
         elementIds: React.Children.map(props.children, child => child.props.id),
-        downloadCallback: status => setLoading(status === 'begin'),
+        downloadCallback: (status, pdfs) => {
+            setLoading(status === 'begin')
+            if (status === 'finish') {
+                props.done && props.done(pdfs)
+            }
+        },
         needHeader: props.needHeader || true,
         needFooter: props.needFooter || true,
         renderPageFooter: (pdf, currentPage) => {
@@ -46,6 +54,14 @@ const PDFPreview = (props: PDFPreviewProps) => {
         }
     }, [props.afterPrint])
 
+    const _action = () => {
+        if (previewType === 'download') {
+            download(props.pdfUrls)
+        } else {
+            print(props.pdfUrls)
+        }
+    }
+
     return (
         <div id='print-container'>
             <Spin spinning={loading}>
@@ -63,7 +79,7 @@ const PDFPreview = (props: PDFPreviewProps) => {
 
                 <div className='action-layer'>
                     <Button onClick={props.onCancel} style={{ marginRight: '20px' }}>取消</Button>
-                    <Button type='primary' onClick={previewType === 'print' ? print : download}>{previewType === 'print' ? '打印' : '下载'}</Button>
+                    <Button type='primary' onClick={_action}>{previewType === 'print' ? '打印' : '下载'}</Button>
                 </div>
             </Spin>
         </div>

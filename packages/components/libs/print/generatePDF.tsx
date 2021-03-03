@@ -1,8 +1,8 @@
 import React from 'react'
 import html2canvas from 'html2canvas'
 import jspdf from 'jspdf'
-import { heitiString } from './heiti.js'
 import './pdf.less'
+import axios from 'axios'
 
 type DownloadStatus = 'begin' | 'finish'
 
@@ -15,8 +15,8 @@ const A4Size: PageSize = {
     height: 841
 }
 const A5Size: PageSize = {
-    width: 559,
-    height: 794
+    width: 419.527,
+    height: 595.275
 }
 
 type PDFSizeType = 'a4' | 'a5'
@@ -39,7 +39,7 @@ const useGeneratePDF = (props: {
     needHeader?: boolean
     needFooter?: boolean
     separate?: boolean // 多pdf是否单独生成
-    downloadCallback?: (status: DownloadStatus) => void
+    downloadCallback?: (status: DownloadStatus, pdfs?: jspdf[]) => void
     padding?: {
         x: number
         y: {
@@ -105,7 +105,7 @@ const useGeneratePDF = (props: {
                 await pdfAddEle(pdf, headerEle as HTMLElement, true)
             }
             await pdfAddEle(pdf, ele)
-            
+
         } else {
             const canvas = await html2canvas(ele, {
                 useCORS: true,
@@ -118,6 +118,7 @@ const useGeneratePDF = (props: {
     }
     const makePDF = async (pdf: jspdf, ele: HTMLElement) => {
         currentPage = 1
+        const { heitiString } = await import('./heiti')
         pdf.addFileToVFS('heiti.ttf', heitiString)
         pdf.addFont('heiti.ttf', 'heiti', 'normal')
         pdf.setFont('heiti')
@@ -142,7 +143,7 @@ const useGeneratePDF = (props: {
 
         return pdf
     }
-    
+
     const makePDFs = async () => {
         const pdfs: jspdf[] = []
         let pdf: jspdf = new jspdf('p', 'pt', props.sizeType)
@@ -165,49 +166,96 @@ const useGeneratePDF = (props: {
         }
         return pdfs
     }
-    
-    const _download = async () => {
-        props.downloadCallback && props.downloadCallback('begin')
-        try {
-            const pdfs = await makePDFs()
-            for (let i = 0; i < pdfs.length; i++) {
-                const pdf = pdfs[i]
-                const title = props.titles?.length > i ? props.titles[i] : '检验报告'
-                pdf.save(title)
+
+    const downloadUrl = async (url: string, title: string) => {
+        const res = await axios.get(url, {
+            responseType: 'blob'
+        })
+        let downloadElement: HTMLAnchorElement | null = document.createElement('a')
+        downloadElement.href = URL.createObjectURL(res.data)
+        downloadElement.download = title
+        downloadElement.click()
+        URL.revokeObjectURL(downloadElement.href)
+        downloadElement = null
+    }
+
+    const _download = async (urls?: string[]) => {
+        if (urls) {
+            for (let i = 0; i < urls.length; i++) {
+                const res = downloadUrl(urls[i], props.titles?.length > i ? props.titles[i] : '检验报告.pdf')
+                
             }
-        } catch (e) {
-            console.log(e)
-        } finally {
             props.downloadCallback && props.downloadCallback('finish')
+        } else {
+            props.downloadCallback && props.downloadCallback('begin')
+            let pdfs: jspdf[] = []
+            try {
+                pdfs = await makePDFs()
+                for (let i = 0; i < pdfs.length; i++) {
+                    const pdf = pdfs[i]
+                    const title = props.titles?.length > i ? props.titles[i] : '检验报告'
+                    pdf.save(title)
+                }
+            } catch (e) {
+                console.log(e)
+            } finally {
+                props.downloadCallback && props.downloadCallback('finish', pdfs)
+            }
         }
     }
-    const _print = async () => {
-        props.downloadCallback && props.downloadCallback('begin')
-        try {
-            const pdfs = await makePDFs()
-
-            for (let i = 0; i < pdfs.length; i++) {
+    const _print = async (urls?: string[]) => {
+        if (urls) {
+            for (const url of urls) {
                 const w = window.open()
-
-                const pdf = pdfs[i]
+                const res = await axios.get(url, {
+                    responseType: 'blob'
+                })
                 const iframe = document.createElement('iframe')
                 iframe.hidden = true
-                const url = URL.createObjectURL(pdf.output('blob'))
-                iframe.src = url
+                iframe.src = URL.createObjectURL(res.data)
                 w.document.body.appendChild(iframe)
                 iframe.contentWindow.print()
             }
-            
+        } else {
+            props.downloadCallback && props.downloadCallback('begin')
+            let pdfs: jspdf[] = []
+            try {
+                pdfs = await makePDFs()
+
+                for (let i = 0; i < pdfs.length; i++) {
+                    const w = window.open()
+
+                    const pdf = pdfs[i]
+                    const iframe = document.createElement('iframe')
+                    iframe.hidden = true
+                    const url = URL.createObjectURL(pdf.output('blob'))
+                    iframe.src = url
+                    w.document.body.appendChild(iframe)
+                    iframe.contentWindow.print()
+                }
+
+            } catch (e) {
+                console.log(e)
+            } finally {
+                props.downloadCallback && props.downloadCallback('finish', pdfs)
+            }
+        }
+    }
+    const _getPDFs = async () => {
+        props.downloadCallback && props.downloadCallback('begin')
+        try {
+            const pdfs = await makePDFs()
+            return pdfs
         } catch (e) {
             console.log(e)
         } finally {
             props.downloadCallback && props.downloadCallback('finish')
-
         }
     }
     return {
         download: _download,
-        print: _print
+        print: _print,
+        getPDFs: _getPDFs
     }
 }
 
