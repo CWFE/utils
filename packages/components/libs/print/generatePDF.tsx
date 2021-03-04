@@ -19,7 +19,7 @@ const A5Size: PageSize = {
     height: 595.275
 }
 
-type PDFSizeType = 'a4' | 'a5'
+export type PDFSizeType = 'a4' | 'a5'
 
 const getSize = (sizeType?: PDFSizeType) => {
     switch (sizeType) {
@@ -109,11 +109,10 @@ const useGeneratePDF = (props: {
         } else {
             const canvas = await html2canvas(ele, {
                 useCORS: true,
-                scale: 2
+                scale: 2,
             })
-            const imgData = canvas.toDataURL('image/jpeg')
-            console.log(imgData.substr(0, 20))
-            pdf.addImage(imgData, 'JPEG', padding.x, positionTop + padding.y.top, pageSize.width - 2 * padding.x, actualEleHeight)
+            const imgData = canvas.toDataURL('image/png', 1.0)
+            pdf.addImage(imgData, 'PNG', padding.x, positionTop + padding.y.top, pageSize.width - 2 * padding.x, actualEleHeight)
         }
     }
     const makePDF = async (pdf: jspdf, ele: HTMLElement) => {

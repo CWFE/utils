@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import { Button, Spin } from 'antd'
 import { PropsWithChildren } from 'react'
-import useGeneratePDF from './generatePDF'
+import useGeneratePDF, { PDFSizeType } from './generatePDF'
 import jsPDF from 'jspdf'
 import _ from 'lodash'
 
@@ -14,6 +14,7 @@ export interface PDFPreviewProps extends PropsWithChildren<any> {
     needFooter?: boolean
     paddingX?: number
     pdfUrls?: string[]
+    sizeType?: PDFSizeType
     otherButtons?: {
         title: string
         action: () => void
@@ -26,6 +27,7 @@ const PDFPreview = (props: PDFPreviewProps) => {
     const {
         previewType = 'print',
         afterPrint = _.noop,
+        sizeType = 'a4'
     } = props
     const [loading, setLoading] = React.useState(false)
 
@@ -73,7 +75,7 @@ const PDFPreview = (props: PDFPreviewProps) => {
                 {
                     React.Children.map(props.children, ((child, idx) => {
                         return (
-                            <div className='print-layer' key={`print-item-${idx}`}>
+                            <div className={`print-layer ${sizeType}`} key={`print-item-${idx}`}>
                                 {
                                     child.props.id ? child : '请设置元素id'
                                 }
