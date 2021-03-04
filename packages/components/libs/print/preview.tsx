@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Button, Spin } from 'antd'
 import { PropsWithChildren } from 'react'
 import useGeneratePDF from './generatePDF'
 import jsPDF from 'jspdf'
+import _ from 'lodash'
 
 export interface PDFPreviewProps extends PropsWithChildren<any> {
     onCancel: () => void
@@ -13,18 +14,22 @@ export interface PDFPreviewProps extends PropsWithChildren<any> {
     needFooter?: boolean
     paddingX?: number
     pdfUrls?: string[]
+    otherButtons?: {
+        title: string
+        action: () => void
+    }[]
 }
 
-export type PDFPreviewType = 'download' | 'print'
+export type PDFPreviewType = 'download' | 'print' | 'all'
 
 const PDFPreview = (props: PDFPreviewProps) => {
     const {
         previewType = 'print',
-        afterPrint = () => {},
+        afterPrint = _.noop,
     } = props
     const [loading, setLoading] = React.useState(false)
 
-    const { download, print } = useGeneratePDF({
+    const { download, print, getPDFs } = useGeneratePDF({
         elementIds: React.Children.map(props.children, child => child.props.id),
         downloadCallback: (status, pdfs) => {
             setLoading(status === 'begin')
@@ -79,7 +84,26 @@ const PDFPreview = (props: PDFPreviewProps) => {
 
                 <div className='action-layer'>
                     <Button onClick={props.onCancel} style={{ marginRight: '20px' }}>取消</Button>
-                    <Button type='primary' onClick={_action}>{previewType === 'print' ? '打印' : '下载'}</Button>
+                    {
+                        previewType === 'all' && (
+                            <>
+                                <Button type='primary' style={{ marginRight: '20px' }} onClick={() => download(props.pdfUrls)}>下载</Button>
+                                <Button type='primary' onClick={() => print(props.pdfUrls)}>打印</Button>
+                            </>
+                        )
+                    }
+                    {
+                        previewType !== 'all' && (
+                            <Button type='primary' onClick={_action}>{previewType === 'print' ? '打印' : '下载'}</Button>
+                        )
+                    }
+                    {
+                        props.otherButtons?.map(t => {
+                            return (
+                                <Button type='primary' key={`preview-other-button-${t.title}`} style={{ marginLeft: '20px' }} onClick={t.action}>{t.title}</Button>
+                            )
+                        })
+                    }
                 </div>
             </Spin>
         </div>

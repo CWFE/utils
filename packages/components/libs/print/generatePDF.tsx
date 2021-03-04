@@ -33,7 +33,7 @@ const getSize = (sizeType?: PDFSizeType) => {
 }
 
 const useGeneratePDF = (props: {
-    elementIds: string[]
+    elementIds?: string[]
     sizeType?: PDFSizeType
     titles?: string[]
     needHeader?: boolean
@@ -144,17 +144,18 @@ const useGeneratePDF = (props: {
         return pdf
     }
 
-    const makePDFs = async () => {
+    const makePDFs = async (ids?: string[]) => {
         const pdfs: jspdf[] = []
         let pdf: jspdf = new jspdf('p', 'pt', props.sizeType)
+        const trueIds = ids || props.elementIds
 
-        for (let i = 0; i < props.elementIds.length; i++) {
+        for (let i = 0; i < trueIds.length; i++) {
             if (props.separate) {
                 pdf = new jspdf('p', 'pt', props.sizeType)
             }
-            const ele = document.getElementById(props.elementIds[i])
+            const ele = document.getElementById(trueIds[i])
             await makePDF(pdf, ele)
-            if (i !== props.elementIds.length - 1 && !props.separate) {
+            if (i !== trueIds.length - 1 && !props.separate) {
                 pdf.addPage()
             }
             if (props.separate) {
@@ -179,8 +180,8 @@ const useGeneratePDF = (props: {
         downloadElement = null
     }
 
-    const _download = async (urls?: string[]) => {
-        if (urls) {
+    const _download = async (urls?: string[], ids?: string[]) => {
+        if (urls?.length) {
             for (let i = 0; i < urls.length; i++) {
                 const res = downloadUrl(urls[i], props.titles?.length > i ? props.titles[i] : '检验报告.pdf')
                 
@@ -190,7 +191,7 @@ const useGeneratePDF = (props: {
             props.downloadCallback && props.downloadCallback('begin')
             let pdfs: jspdf[] = []
             try {
-                pdfs = await makePDFs()
+                pdfs = await makePDFs(ids)
                 for (let i = 0; i < pdfs.length; i++) {
                     const pdf = pdfs[i]
                     const title = props.titles?.length > i ? props.titles[i] : '检验报告'
@@ -203,8 +204,8 @@ const useGeneratePDF = (props: {
             }
         }
     }
-    const _print = async (urls?: string[]) => {
-        if (urls) {
+    const _print = async (urls?: string[], ids?: string[]) => {
+        if (urls?.length) {
             for (const url of urls) {
                 const w = window.open()
                 const res = await axios.get(url, {
@@ -220,7 +221,7 @@ const useGeneratePDF = (props: {
             props.downloadCallback && props.downloadCallback('begin')
             let pdfs: jspdf[] = []
             try {
-                pdfs = await makePDFs()
+                pdfs = await makePDFs(ids)
 
                 for (let i = 0; i < pdfs.length; i++) {
                     const w = window.open()
@@ -241,13 +242,13 @@ const useGeneratePDF = (props: {
             }
         }
     }
-    const _getPDFs = async () => {
+    const _getPDFs = async (ids?: string[]): Promise<jspdf[]> => {
         props.downloadCallback && props.downloadCallback('begin')
         try {
-            const pdfs = await makePDFs()
-            return pdfs
+            const pdfs = await makePDFs(ids)
+            return Promise.resolve(pdfs)
         } catch (e) {
-            console.log(e)
+            return Promise.resolve([])
         } finally {
             props.downloadCallback && props.downloadCallback('finish')
         }
