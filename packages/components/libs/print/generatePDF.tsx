@@ -19,6 +19,13 @@ const A5Size: PageSize = {
     height: 595.275
 }
 
+type PDFAddEleProps = {
+    pdf: jspdf,
+    ele: HTMLElement,
+    isHeader?: boolean,
+    isFooter?: boolean
+}
+
 export type PDFSizeType = 'a4' | 'a5'
 
 const getSize = (sizeType?: PDFSizeType) => {
@@ -71,7 +78,14 @@ const useGeneratePDF = (props: {
     let remainOffsetTop = 0
     let currentPage = 1
 
-    const pdfAddEle = async (pdf: jspdf, ele: HTMLElement, isHeader?: boolean, isFooter?: boolean): Promise<any> => {
+    const pdfAddEle = async (params: PDFAddEleProps): Promise<any> => {
+        const {
+            pdf,
+            ele,
+            isHeader = false,
+            isFooter = false
+        } = params
+        console.log(ele)
         const headerEle = ele.parentElement.children[0] as HTMLElement
         const footerEle = ele.parentElement.children[ele.parentElement.children.length - 1] as HTMLElement
 
@@ -92,7 +106,11 @@ const useGeneratePDF = (props: {
         const totalHeight = positionTop + actualEleHeight + padding.y.top + padding.y.bottom
         if (totalHeight + (props.needFooter ? footerEle.clientHeight : 0) > pageSize.height && !isHeader && !isFooter) {
             if (props.needFooter) {
-                await pdfAddEle(pdf, footerEle, false, true)
+                await pdfAddEle({
+                    pdf: pdf,
+                    ele: footerEle,
+                    isFooter: true
+                })
             }
             props.renderPageFooter && props.renderPageFooter(pdf, currentPage)
             props.renderPageHeader && props.renderPageHeader(pdf, currentPage)
@@ -102,9 +120,16 @@ const useGeneratePDF = (props: {
             remainOffsetTop += pageSize.height - positionTop
             if (props.needHeader) {
                 remainOffsetTop += padding.y.headerBottom
-                await pdfAddEle(pdf, headerEle as HTMLElement, true)
+                await pdfAddEle({
+                    pdf: pdf,
+                    ele: headerEle,
+                    isHeader: true
+                })
             }
-            await pdfAddEle(pdf, ele)
+            await pdfAddEle({
+                pdf: pdf,
+                ele: ele
+            })
 
         } else {
             const canvas = await html2canvas(ele, {
@@ -115,14 +140,15 @@ const useGeneratePDF = (props: {
             pdf.addImage(imgData, 'PNG', padding.x, positionTop + padding.y.top, pageSize.width - 2 * padding.x, actualEleHeight)
         }
     }
+
     const makePDF = async (pdf: jspdf, ele: HTMLElement) => {
         currentPage = 1
-        const { heitiString } = await import('./heiti')
-        pdf.addFileToVFS('heiti.ttf', heitiString)
-        pdf.addFont('heiti.ttf', 'heiti', 'normal')
-        pdf.setFont('heiti')
         remainOffsetTop = 0
-        await pdfAddEle(pdf, ele.children[0] as HTMLElement, true)
+        const tasksParams: PDFAddEleProps[] = [{
+            pdf: pdf,
+            ele: ele.children[0] as HTMLElement,
+            isHeader: true
+        }]
         props.renderPageFooter && props.renderPageFooter(pdf, currentPage)
         props.renderPageHeader && props.renderPageHeader(pdf, currentPage)
 
@@ -134,23 +160,42 @@ const useGeneratePDF = (props: {
             if (i === ele.children.length - 1) {
                 break
             }
-            await pdfAddEle(pdf, childEle)
+            tasksParams.push({
+                pdf: pdf,
+                ele: childEle
+            })
         }
-        await pdfAddEle(pdf, ele.children[ele.children.length - 1] as HTMLElement, false, true)
+        tasksParams.push({
+            pdf: pdf,
+            ele: ele.children[ele.children.length - 1] as HTMLElement,
+            isFooter: true
+        })
+        // await Promise.all(tasksParams.map(p => pdfAddEle(p)))
+        for (const t of tasksParams) {
+            await pdfAddEle(t)
+        }
+
         props.renderPageHeader && props.renderPageHeader(pdf, currentPage)
         props.renderPageFooter && props.renderPageFooter(pdf, currentPage)
-
         return pdf
     }
 
     const makePDFs = async (ids?: string[]) => {
         const pdfs: jspdf[] = []
         let pdf: jspdf = new jspdf('p', 'pt', props.sizeType)
+        const { heitiString } = await import('./heiti')
+        pdf.addFileToVFS('heiti.ttf', heitiString)
+        pdf.addFont('heiti.ttf', 'heiti', 'normal')
+        pdf.setFont('heiti')
         const trueIds = ids || props.elementIds
 
         for (let i = 0; i < trueIds.length; i++) {
             if (props.separate) {
                 pdf = new jspdf('p', 'pt', props.sizeType)
+                const { heitiString } = await import('./heiti')
+                pdf.addFileToVFS('heiti.ttf', heitiString)
+                pdf.addFont('heiti.ttf', 'heiti', 'normal')
+                pdf.setFont('heiti')
             }
             const ele = document.getElementById(trueIds[i])
             await makePDF(pdf, ele)
