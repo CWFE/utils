@@ -57,6 +57,7 @@ const useGeneratePDF = (props: {
     }
     renderPageHeader?: (pdf: jspdf, currentPage: number) => void
     renderPageFooter?: (pdf: jspdf, currentPage: number) => void
+    renderPageFooterHeight?: number
 }) => {
     const {
         padding = {
@@ -66,7 +67,8 @@ const useGeneratePDF = (props: {
                 bottom: 10,
                 headerBottom: 5
             }
-        }
+        },
+        renderPageFooterHeight = 15
     } = props
     const pageSize = getSize(props.sizeType)
 
@@ -97,7 +99,10 @@ const useGeneratePDF = (props: {
         if (isHeader) {
             positionTop = acturalOffsetTop
         } else if (isFooter) {
-            positionTop = pageSize.height - (padding.y.top + padding.y.bottom) - ele.clientHeight
+            positionTop = pageSize.height - (padding.y.top + padding.y.bottom) - actualEleHeight
+            if (props.renderPageFooter) {
+                positionTop -= renderPageFooterHeight
+            }
         } else {
             const headerBottom = acturalLength(headerEle.offsetTop - ele.parentElement.offsetTop, ele.clientWidth) + acturalLength(headerEle.clientHeight, headerEle.clientWidth)
             positionTop = acturalOffsetTop - (currentPage - 1) * pageSize.height + headerBottom * ((props.needHeader ? currentPage : 1) - 1) + remainOffsetTop

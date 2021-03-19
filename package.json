@@ -40,10 +40,10 @@
   "peerDependencies": {
     "axios": "^0.21.0",
     "react": ">=16.8.0",
-    "react-dom": ">=16.8.0"
+    "react-dom": ">=16.8.0",
+    "lodash": "^4.17.20"
   },
   "dependencies": {
-    "ahooks": "^2.9.2",
-    "lodash": "^4.17.20"
+    "ahooks": "^2.9.2"
   }
 }
