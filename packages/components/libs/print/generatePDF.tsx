@@ -40,6 +40,7 @@ const getSize = (sizeType?: PDFSizeType) => {
 }
 
 const useGeneratePDF = (props: {
+    elementIds?: string[]
     sizeType?: PDFSizeType
     titles?: string[]
     needHeader?: boolean
@@ -183,14 +184,14 @@ const useGeneratePDF = (props: {
         return pdf
     }
 
-    const makePDFs = async (ids: string[]) => {
+    const makePDFs = async (ids?: string[]) => {
         const pdfs: jspdf[] = []
         let pdf: jspdf = new jspdf('p', 'pt', props.sizeType)
         const { heitiString } = await import('./heiti')
         pdf.addFileToVFS('heiti.ttf', heitiString)
         pdf.addFont('heiti.ttf', 'heiti', 'normal')
         pdf.setFont('heiti')
-        const trueIds = ids
+        const trueIds = ids || props.elementIds
 
         for (let i = 0; i < trueIds.length; i++) {
             if (props.separate) {
