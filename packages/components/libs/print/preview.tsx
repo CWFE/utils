@@ -71,7 +71,7 @@ const PDFPreview = (props: PDFPreviewProps) => {
 
     return (
         <div id='print-container'>
-            <Spin spinning={loading}>
+            <Spin spinning={loading} tip='正在生成报告..'>
                 {
                     React.Children.map(props.children, ((child, idx) => {
                         return (
