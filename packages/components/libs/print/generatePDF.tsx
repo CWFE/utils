@@ -87,6 +87,7 @@ const useGeneratePDF = (props: {
             isHeader = false,
             isFooter = false
         } = params
+        console.log(ele)
         const headerEle = ele.parentElement.children[0] as HTMLElement
         const footerEle = ele.parentElement.children[ele.parentElement.children.length - 1] as HTMLElement
 
