@@ -142,9 +142,7 @@ const useGeneratePDF = (props: {
                 setTimeout(async () => {
                     const canvas = await html2canvas(ele, {
                         useCORS: true,
-                        scale: 2,
-                        logging: true,
-                        onclone: n => console.log('onClone: ', n)
+                        scale: 2
                     })
                     const imgData = canvas.toDataURL('image/png', 1)
                     pdf.addImage(imgData, 'PNG', padding.x, positionTop + padding.y.top, pageSize.width - 2 * padding.x, actualEleHeight)
