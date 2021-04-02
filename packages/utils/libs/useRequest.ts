@@ -12,12 +12,12 @@ type UseRequestProps = {
     needError?: boolean
 }
 
-export type RequestLoadData = (options?: AxiosRequestConfig, retryCount?: number) => Promise<unknown>
+export type RequestLoadData<T> = <C>(options?: AxiosRequestConfig, retryCount?: number) => Promise<C&T>
 
 interface returnValue<T> {
     result?: T
     setResult: React.Dispatch<any>
-    loadData: RequestLoadData
+    loadData: RequestLoadData<T>
     loading: boolean
     err?: Error
     isCancel?: boolean
