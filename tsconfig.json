@@ -14,7 +14,8 @@
       "ES2015",
       "DOM"
     ],
-    "noEmit": false
+    "noEmit": false,
+    "skipLibCheck": true
   },
   "include": [
     "packages/**/*"
