@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
-import Axios, { AxiosRequestConfig } from 'axios'
-import { RequestInstance } from './request'
+import Axios from 'axios'
+import { RequestInstance, UtilAxiosRequestConfig } from './request'
 import { usePersistFn } from 'ahooks'
 
 type UseRequestProps = {
-    params: AxiosRequestConfig
+    params: UtilAxiosRequestConfig
     manual?: boolean,
     retry?: number,
     cancelCallback?: (e: Error) => void
@@ -12,7 +12,7 @@ type UseRequestProps = {
     needError?: boolean
 }
 
-export type RequestLoadData<T> = (options?: Partial<AxiosRequestConfig>, retryCount?: number) => Promise<T>
+export type RequestLoadData<T> = (options?: Partial<UtilAxiosRequestConfig>, retryCount?: number) => Promise<T>
 
 interface returnValue<T> {
     result?: T
@@ -33,9 +33,9 @@ export function useRequest<T> ({
     const [loading, setLoading] = useState(false)
     const [err, setErr] = useState<Error>()
 
-    const loadData = usePersistFn(async (options?: Partial<AxiosRequestConfig>, retryCount?: number) => {
+    const loadData = usePersistFn(async (options?: Partial<UtilAxiosRequestConfig>, retryCount?: number) => {
         setLoading(true)
-        const realParams: AxiosRequestConfig = Object.assign(options || {}, params || {})
+        const realParams: UtilAxiosRequestConfig = Object.assign(options || {}, params || {})
         if (!realParams.url?.length) {
             return
         }

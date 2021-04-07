@@ -1,14 +1,16 @@
 import Axios, { AxiosRequestConfig, AxiosResponse, Canceler } from 'axios'
 
+export type UtilAxiosRequestConfig = AxiosRequestConfig
+
 export const axiosInstance = Axios.create()
 class Request {
     public cancelTokenSources: {
         [url: string]: Canceler
     } = {}
-    public getCancelTokenKey = (config: Readonly<AxiosRequestConfig>) => {
+    public getCancelTokenKey = (config: Readonly<UtilAxiosRequestConfig>) => {
         return (config.method || 'GET')?.toUpperCase() + '?' + config.url as string + JSON.stringify(config.data) + JSON.stringify(config.params)
     }
-    public request = async function AxiosRequest<T = any> (config: AxiosRequestConfig, retryCount?: number): Promise<AxiosResponse<T>> {
+    public request = async function AxiosRequest<T = any> (config: UtilAxiosRequestConfig, retryCount?: number): Promise<AxiosResponse<T>> {
         try {
             // 执 行
             const response = await axiosInstance(config)
