@@ -1,6 +1,6 @@
 import React from 'react'
 import jspdf from 'jspdf'
-import './pdf.less'
+import '../static/pdf.less'
 import axios from 'axios'
 import domtoimage from 'dom-to-image'
 
@@ -200,7 +200,7 @@ const useGeneratePDF = (props: {
     const makePDFs = async (ids?: string[]) => {
         const pdfs: jspdf[] = []
         let pdf: jspdf = new jspdf('p', 'pt', props.sizeType)
-        const { heitiString } = await import('./heiti')
+        const { heitiString } = await import('../static/heiti')
         pdf.addFileToVFS('heiti.ttf', heitiString)
         pdf.addFont('heiti.ttf', 'heiti', 'normal')
         pdf.setFont('heiti')
@@ -209,7 +209,7 @@ const useGeneratePDF = (props: {
         for (let i = 0; i < trueIds.length; i++) {
             if (props.separate) {
                 pdf = new jspdf('p', 'pt', props.sizeType)
-                const { heitiString } = await import('./heiti')
+                const { heitiString } = await import('../static/heiti')
                 pdf.addFileToVFS('heiti.ttf', heitiString)
                 pdf.addFont('heiti.ttf', 'heiti', 'normal')
                 pdf.setFont('heiti')

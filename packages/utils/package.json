@@ -10,7 +10,7 @@
         "ramda": "^0.27.1"
     },
     "scripts": {
-        "prepublishOnly": "rm -rf src && tsc"
+        "prepublishOnly": "rm -rf src/libs && tsc && mv libs/static src/static"
     },
     "publishConfig": {
         "access": "public"
