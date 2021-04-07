@@ -10,10 +10,10 @@
         "ramda": "^0.27.1"
     },
     "scripts": {
-        "prepublishOnly": "rm -rf src/libs && tsc && cp -R libs/static src/static"
+        "prepublishOnly": "rm -rf src && tsc && cp -R libs/static src/static"
     },
     "publishConfig": {
         "access": "public"
     },
-    "gitHead": "aa36c61b412fe96fcfaf27d30a2730fa63df3499"
+    "gitHead": "432169f851b55ca8acb0eb209933ced18b97e44e"
 }
