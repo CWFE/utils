@@ -1,9 +1,8 @@
-import Axios, { AxiosRequestConfig, AxiosResponse, Canceler } from 'axios'
+import Axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, Canceler } from 'axios'
 
 export type UtilAxiosRequestConfig = AxiosRequestConfig
-
-export const axiosInstance = Axios.create()
 class Request {
+    public axiosInstance: AxiosInstance
     public cancelTokenSources: {
         [url: string]: Canceler
     } = {}
@@ -13,7 +12,7 @@ class Request {
     public request = async function AxiosRequest<T = any> (config: UtilAxiosRequestConfig, retryCount?: number): Promise<AxiosResponse<T>> {
         try {
             // 执行
-            const response = await axiosInstance(config)
+            const response = await this.axiosInstance(config)
             return Promise.resolve(response)
         } catch (error) {
             if ((!retryCount || retryCount <= 0) || Axios.isCancel(error)) {
@@ -25,7 +24,8 @@ class Request {
     }
 
     constructor () {
-        axiosInstance.interceptors.request.use(config => {
+        this.axiosInstance = Axios.create()
+        this.axiosInstance.interceptors.request.use(config => {
             // 判断缓存中是否有相同请求
             const cancelTokenKey = this.getCancelTokenKey(config)
             if (this.cancelTokenSources[cancelTokenKey]) {
