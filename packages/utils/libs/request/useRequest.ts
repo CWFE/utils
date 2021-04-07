@@ -12,7 +12,7 @@ type UseRequestProps = {
     needError?: boolean
 }
 
-export type RequestLoadData<T> = <C>(options?: AxiosRequestConfig, retryCount?: number) => Promise<C&T>
+export type RequestLoadData<T> = (options?: Partial<AxiosRequestConfig>, retryCount?: number) => Promise<T>
 
 interface returnValue<T> {
     result?: T
@@ -62,7 +62,7 @@ export function useRequest<T> ({
                 }
             }
         }
-    })
+    }) as RequestLoadData<any>
 
     useEffect(() => {
         if (!manual) {

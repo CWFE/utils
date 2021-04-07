@@ -1,5 +1,5 @@
-import Axios, { RequestInstance } from './request'
-import { useRequest } from './useRequest'
+import Axios, { RequestInstance } from './request/request'
+import { useRequest } from './request/useRequest'
 
 export {
     RequestInstance,

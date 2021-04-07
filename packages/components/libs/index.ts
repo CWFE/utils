@@ -1,7 +1,9 @@
-import PrintContainer from './print/index'
-import usePrint from './print/usePrint'
+import PDFPreview from './pdf/preview'
+import useGeneratePDF from './pdf/generatePDF'
+import imageEditor from './image-editor/imageEditorManager'
 
 export default {
-    PrintContainer,
-    usePrint
+    PDFPreview,
+    useGeneratePDF,
+    imageEditor
 }
