@@ -8,3 +8,5 @@ yarn-error.log
 packages/*/node_modules
 packages/*/src
 .idea
+
+lerna-debug.log
