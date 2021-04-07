@@ -1,5 +1,5 @@
 {
-    "name": "@cwfe/components",
+    "name": "@cwfe/component",
     "version": "1.0.1",
     "main": "./src/index.js",
     "author": "喵大快救我 <wang0122xl@163.com>",
@@ -23,5 +23,5 @@
         "@types/dom-to-image": "^2.6.2",
         "@types/styled-components": "^5.1.7"
     },
-    "gitHead": "1b2b243e5cb0ab0f8c26ac79395a0a944e1f5741"
+    "gitHead": "246451f44047104612754e1e0e30fbeafe9df6cf"
 }
