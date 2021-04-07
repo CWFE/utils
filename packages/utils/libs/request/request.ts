@@ -12,7 +12,7 @@ class Request {
     }
     public request = async function AxiosRequest<T = any> (config: UtilAxiosRequestConfig, retryCount?: number): Promise<AxiosResponse<T>> {
         try {
-            // 执 行
+            // 执行
             const response = await axiosInstance(config)
             return Promise.resolve(response)
         } catch (error) {
