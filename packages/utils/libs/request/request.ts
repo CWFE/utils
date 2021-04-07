@@ -1,7 +1,6 @@
 import Axios, { AxiosRequestConfig, AxiosResponse, Canceler } from 'axios'
 
 export const axiosInstance = Axios.create()
-
 class Request {
     public cancelTokenSources: {
         [url: string]: Canceler
