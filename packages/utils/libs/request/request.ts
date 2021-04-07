@@ -26,7 +26,7 @@ class Request {
     constructor () {
         this.axiosInstance = Axios.create()
         this.axiosInstance.interceptors.request.use(config => {
-            // 判断缓存中是否有相同请求
+            // 判断缓存中是否有相同请 求
             const cancelTokenKey = this.getCancelTokenKey(config)
             if (this.cancelTokenSources[cancelTokenKey]) {
                 this.cancelTokenSources[cancelTokenKey]()

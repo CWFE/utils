@@ -189,7 +189,6 @@ const useGeneratePDF = (props: {
         for (const t of tasksParams) {
             await pdfAddEle(t)
         }
-        
         // await Promise.all(tasksParams.map(p => pdfAddEle(p)))
 
         props.renderPageHeader && props.renderPageHeader(pdf, currentPage)
