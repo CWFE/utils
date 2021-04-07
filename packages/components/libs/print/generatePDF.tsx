@@ -1,9 +1,8 @@
 import React from 'react'
-import html2canvas from 'html2canvas'
 import jspdf from 'jspdf'
 import './pdf.less'
 import axios from 'axios'
-import { promisify } from 'util'
+import domtoimage from 'dom-to-image'
 
 type DownloadStatus = 'begin' | 'finish'
 
@@ -88,7 +87,7 @@ const useGeneratePDF = (props: {
             isHeader = false,
             isFooter = false
         } = params
-        console.log('ele: ' + ele)
+        console.log(ele)
         const headerEle = ele.parentElement.children[0] as HTMLElement
         const footerEle = ele.parentElement.children[ele.parentElement.children.length - 1] as HTMLElement
 
@@ -112,7 +111,7 @@ const useGeneratePDF = (props: {
         const totalHeight = positionTop + actualEleHeight + padding.y.top + padding.y.bottom
         if (totalHeight + (props.needFooter ? footerEle.clientHeight : 0) > pageSize.height && !isHeader && !isFooter) {
             if (props.needFooter) {
-                return await pdfAddEle({
+                await pdfAddEle({
                     pdf: pdf,
                     ele: footerEle,
                     isFooter: true
@@ -126,28 +125,34 @@ const useGeneratePDF = (props: {
             remainOffsetTop += pageSize.height - positionTop
             if (props.needHeader) {
                 remainOffsetTop += padding.y.headerBottom
-                return await pdfAddEle({
+                await pdfAddEle({
                     pdf: pdf,
                     ele: headerEle,
                     isHeader: true
                 })
             }
-            return await pdfAddEle({
+            await pdfAddEle({
                 pdf: pdf,
                 ele: ele
             })
 
         } else {
+            const imgData = await domtoimage.toSvg(ele, {
+                quality: 1
+            })
             return new Promise(resolve => {
-                setTimeout(async () => {
-                    const canvas = await html2canvas(ele, {
-                        useCORS: true,
-                        scale: 2
-                    })
-                    const imgData = canvas.toDataURL('image/png', 1)
-                    pdf.addImage(imgData, 'PNG', padding.x, positionTop + padding.y.top, pageSize.width - 2 * padding.x, actualEleHeight)
+                const img = new Image()
+                img.src = imgData
+                img.onload = () => {
+                    const canvas = document.createElement('canvas')
+                    canvas.width = img.width * 2
+                    canvas.height = img.height * 2
+                    canvas.style.transformOrigin = 'top left'
+                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height)
+                    pdf.addImage(canvas.toDataURL('image/png', 1), 'PNG', padding.x, positionTop + padding.y.top, pageSize.width - 2 * padding.x, actualEleHeight)
+
                     resolve(0)
-                }, 0)
+                }
             })
         }
     }
@@ -181,10 +186,10 @@ const useGeneratePDF = (props: {
             ele: ele.children[ele.children.length - 1] as HTMLElement,
             isFooter: true
         })
-        await Promise.all(tasksParams.map(p => pdfAddEle(p)))
-        // for (const t of tasksParams) {
-        //     await pdfAddEle(t)
-        // }
+        // await Promise.all(tasksParams.map(p => pdfAddEle(p)))
+        for (const t of tasksParams) {
+            await pdfAddEle(t)
+        }
 
         props.renderPageHeader && props.renderPageHeader(pdf, currentPage)
         props.renderPageFooter && props.renderPageFooter(pdf, currentPage)
