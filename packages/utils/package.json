@@ -1,5 +1,5 @@
 {
-    "name": "@cwfe/utils",
+    "name": "@cwfe/util",
     "version": "1.0.0",
     "main": "./src/index.js",
     "author": "喵大快救我 <wang0122xl@163.com>",
@@ -15,5 +15,5 @@
     "publishConfig": {
         "access": "public"
     },
-    "gitHead": "7c8e2c9b94cd08507b250eab4f29670dbc1954c3"
+    "gitHead": "1b2b243e5cb0ab0f8c26ac79395a0a944e1f5741"
 }
