@@ -48,7 +48,7 @@ const PDFPreview = (props: PDFPreviewProps) => {
                 .text(`第${currentPage}页`, pdf.internal.pageSize.getWidth() - 42, pdf.internal.pageSize.getHeight() - 12)
         },
         // renderPageHeader: (pdf, size) => {
-        //     pdf
+        //     pdf 
         //         .setTextColor('#111')
         //         .setFontSize(8)
         //         .text(`第${pdf.getCurrentPageInfo().pageNumber}页`, size.width - 42, 10)
