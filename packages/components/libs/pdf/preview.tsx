@@ -62,7 +62,6 @@ const PDFPreview = (props: PDFPreviewProps) => {
     }, [props.afterPrint])
 
     const _action = () => {
-        document.getElementById('print-container').scrollTop = 0
         if (previewType === 'download') {
             download(props.pdfUrls)
         } else {
