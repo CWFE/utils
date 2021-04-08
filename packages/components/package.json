@@ -19,6 +19,8 @@
         "access": "public"
     },
     "devDependencies": {
+        "@babel/plugin-transform-modules-commonjs": "^7.13.8",
+        "@babel/preset-es2015": "^7.0.0-beta.53",
         "@types/antd": "^1.0.0",
         "@types/dom-to-image": "^2.6.2",
         "@types/styled-components": "^5.1.7"
