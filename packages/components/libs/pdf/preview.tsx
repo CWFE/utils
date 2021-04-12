@@ -29,7 +29,7 @@ const PDFPreview = (props: PDFPreviewProps) => {
         previewType = 'print',
         afterPrint = _.noop,
         sizeType = 'a4'
-    } = props
+    } = props 
     const [loading, setLoading] = React.useState(false)
 
     const { download, print, getPDFs } = useGeneratePDF({
