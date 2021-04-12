@@ -18,7 +18,8 @@ export interface PDFPreviewProps extends PropsWithChildren<any> {
     otherButtons?: {
         title: string
         action: () => void
-    }[]
+    }[],
+    separate: boolean
 }
 
 export type PDFPreviewType = 'download' | 'print' | 'all'
@@ -33,6 +34,7 @@ const PDFPreview = (props: PDFPreviewProps) => {
 
     const { download, print, getPDFs } = useGeneratePDF({
         elementIds: React.Children.map(props.children, child => child.props.id),
+        separate: props.separate,
         downloadCallback: (status, pdfs) => {
             setLoading(status === 'begin')
             if (status === 'finish') {
