@@ -19,7 +19,7 @@ export interface PDFPreviewProps extends PropsWithChildren<any> {
         title: string
         action: () => void
     }[],
-    separate: boolean
+    separate?: boolean
 }
 
 export type PDFPreviewType = 'download' | 'print' | 'all'
