@@ -20,6 +20,7 @@ export interface PDFPreviewProps extends PropsWithChildren<any> {
         action: () => void
     }[],
     separate?: boolean
+    titles?: string[]
 }
 
 export type PDFPreviewType = 'download' | 'print' | 'all'
@@ -33,6 +34,7 @@ const PDFPreview = (props: PDFPreviewProps) => {
     const [loading, setLoading] = React.useState(false)
 
     const { download, print, getPDFs } = useGeneratePDF({
+        titles: props.titles,
         elementIds: React.Children.map(props.children, child => child.props.id),
         separate: props.separate,
         downloadCallback: (status, pdfs) => {
