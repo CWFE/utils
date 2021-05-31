@@ -136,7 +136,9 @@ const useGeneratePDF = (props: {
             })
 
         } else {
-            const imgData = await domtoimage.toPng(ele)
+            const imgData = await domtoimage.toPng(ele, {
+                quality: 1
+            })
             return new Promise(resolve => {
                 const img = new Image()
                 img.src = imgData
@@ -148,7 +150,7 @@ const useGeneratePDF = (props: {
                     canvas.getContext('2d').fillStyle = '#fff'
                     canvas.getContext('2d').fillRect(0, 0, canvas.width, canvas.height)
                     canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height)
-                    pdf.addImage(canvas.toDataURL('image/jpeg'), 'JPEG', padding.x, positionTop + padding.y.top, pageSize.width - 2 * padding.x, actualEleHeight)
+                    pdf.addImage(canvas.toDataURL('image/jpeg', 1), 'JPEG', padding.x, positionTop + padding.y.top, pageSize.width - 2 * padding.x, actualEleHeight)
 
                     resolve(0)
                 }
