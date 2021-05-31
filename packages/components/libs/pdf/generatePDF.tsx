@@ -136,9 +136,7 @@ const useGeneratePDF = (props: {
             })
 
         } else {
-            const imgData = await domtoimage.toPng(ele, {
-                quality: 1
-            })
+            const imgData = await domtoimage.toSvg(ele)
             return new Promise(resolve => {
                 const img = new Image()
                 img.src = imgData
