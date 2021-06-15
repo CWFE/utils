@@ -10,8 +10,6 @@ export interface PDFPreviewProps extends PropsWithChildren<any> {
     afterPrint?: () => void
     done?: (pdfs: jsPDF[]) => void
     previewType?: PDFPreviewType
-    needHeader?: boolean
-    needFooter?: boolean
     paddingX?: number
     pdfUrls?: string[]
     sizeType?: PDFSizeType
@@ -21,6 +19,7 @@ export interface PDFPreviewProps extends PropsWithChildren<any> {
     }[],
     separate?: boolean
     titles?: string[]
+    noPageNumber?: boolean
 }
 
 export type PDFPreviewType = 'download' | 'print' | 'all'
@@ -43,9 +42,7 @@ const PDFPreview = (props: PDFPreviewProps) => {
                 props.done && props.done(pdfs)
             }
         },
-        needHeader: props.needHeader || true,
-        needFooter: props.needFooter || true,
-        renderPageFooter: (pdf, currentPage) => {
+        renderPageFooter: props.noPageNumber ? undefined : (pdf, currentPage) => {
             pdf
                 .setTextColor('#111')
                 .setFontSize(8)

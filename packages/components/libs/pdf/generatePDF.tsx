@@ -30,12 +30,12 @@ export type PDFSizeType = 'a4' | 'a5'
 
 const getSize = (sizeType?: PDFSizeType) => {
     switch (sizeType) {
-    case 'a4':
-        return A4Size
-    case 'a5':
-        return A5Size
-    default:
-        return A4Size
+        case 'a4':
+            return A4Size
+        case 'a5':
+            return A5Size
+        default:
+            return A4Size
     }
 }
 
@@ -43,8 +43,6 @@ const useGeneratePDF = (props: {
     elementIds?: string[]
     sizeType?: PDFSizeType
     titles?: string[]
-    needHeader?: boolean
-    needFooter?: boolean
     separate?: boolean // 多pdf是否单独生成
     downloadCallback?: (status: DownloadStatus, pdfs?: jspdf[]) => void
     padding?: {
@@ -104,32 +102,32 @@ const useGeneratePDF = (props: {
             }
         } else {
             const headerBottom = acturalLength(headerEle.offsetTop - ele.parentElement.offsetTop, ele.clientWidth) + acturalLength(headerEle.clientHeight, headerEle.clientWidth)
-            positionTop = acturalOffsetTop - (currentPage - 1) * pageSize.height + headerBottom * ((props.needHeader ? currentPage : 1) - 1) + remainOffsetTop
+            positionTop = acturalOffsetTop - (currentPage - 1) * pageSize.height + headerBottom * (currentPage - 1) + remainOffsetTop
+        }
+
+        if (actualEleHeight <= 0) {
+            return
         }
 
         const totalHeight = positionTop + actualEleHeight + padding.y.top + padding.y.bottom
-        if (totalHeight + (props.needFooter ? footerEle.clientHeight : 0) > pageSize.height && !isHeader && !isFooter) {
-            if (props.needFooter) {
-                await pdfAddEle({
-                    pdf: pdf,
-                    ele: footerEle,
-                    isFooter: true
-                })
-            }
+        if (totalHeight + footerEle.clientHeight > pageSize.height && !isHeader && !isFooter) {
+            await pdfAddEle({
+                pdf: pdf,
+                ele: footerEle,
+                isFooter: true
+            })
             props.renderPageFooter && props.renderPageFooter(pdf, currentPage)
             props.renderPageHeader && props.renderPageHeader(pdf, currentPage)
 
             pdf.addPage()
             currentPage += 1
             remainOffsetTop += pageSize.height - positionTop
-            if (props.needHeader) {
-                remainOffsetTop += padding.y.headerBottom
-                await pdfAddEle({
-                    pdf: pdf,
-                    ele: headerEle,
-                    isHeader: true
-                })
-            }
+            remainOffsetTop += padding.y.headerBottom
+            await pdfAddEle({
+                pdf: pdf,
+                ele: headerEle,
+                isHeader: true
+            })
             await pdfAddEle({
                 pdf: pdf,
                 ele: ele
@@ -243,7 +241,7 @@ const useGeneratePDF = (props: {
         if (urls?.length) {
             for (let i = 0; i < urls.length; i++) {
                 const res = downloadUrl(urls[i], props.titles?.length > i ? props.titles[i] : '检验报告.pdf')
-                
+
             }
             props.downloadCallback && props.downloadCallback('finish')
         } else {
