@@ -1,13 +1,38 @@
 import Axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, Canceler } from 'axios'
 
+/**
+ * 检测对象类型
+ * @param obj
+ * @param type
+ */
+function checkObjType (obj: any, type: string) {
+    return Object.prototype.toString.call(obj) === `[object ${ type }]`
+}
+
+let index = 0
+
 export type UtilAxiosRequestConfig = AxiosRequestConfig
+
 class Request {
     public axiosInstance: AxiosInstance
     public cancelTokenSources: {
         [url: string]: Canceler
     } = {}
     public getCancelTokenKey = (config: Readonly<UtilAxiosRequestConfig>) => {
-        return (config.method || 'GET')?.toUpperCase() + '?' + config.url as string + JSON.stringify(config.data) + JSON.stringify(config.params)
+        let dataKey = ''
+        if (checkObjType(config.data, 'FormData')) {
+            for (const [key, value] of config.data.entries()) {
+                if (checkObjType(value, 'File') || checkObjType(value, 'Blob')) {
+                    dataKey += `key:${ key }, value:${ +new Date() + index }`
+                    index++
+                } else {
+                    dataKey += `key:${ key }, value:${ JSON.stringify(value) }`
+                }
+            }
+        } else {
+            dataKey += JSON.stringify(config.data)
+        }
+        return (config.method || 'GET')?.toUpperCase() + '?' + config.url + dataKey + JSON.stringify(config.params)
     }
     public request = async function AxiosRequest<T = any> (config: UtilAxiosRequestConfig, retryCount?: number): Promise<AxiosResponse<T>> {
         try {
