@@ -21,13 +21,18 @@ class Request {
     public getCancelTokenKey = (config: Readonly<UtilAxiosRequestConfig>) => {
         let dataKey = ''
         if (checkObjType(config.data, 'FormData')) {
-            for (const [key, value] of config.data.entries()) {
-                if (checkObjType(value, 'File') || checkObjType(value, 'Blob')) {
-                    dataKey += `key:${ key }, value:${ +new Date() + index }`
-                    index++
-                } else {
-                    dataKey += `key:${ key }, value:${ JSON.stringify(value) }`
+            if (config.data.entries) {
+                for (const [key, value] of config.data.entries()) {
+                    if (checkObjType(value, 'File') || checkObjType(value, 'Blob')) {
+                        dataKey += `key:${ key }, value:${ +new Date() + index }`
+                        index++
+                    } else {
+                        dataKey += `key:${ key }, value:${ JSON.stringify(value) }`
+                    }
                 }
+            } else {
+                dataKey += `formData: ${ +new Date() + index }`
+                index++
             }
         } else {
             dataKey += JSON.stringify(config.data)
