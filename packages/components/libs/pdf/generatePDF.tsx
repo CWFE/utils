@@ -30,12 +30,12 @@ export type PDFSizeType = 'a4' | 'a5'
 
 const getSize = (sizeType?: PDFSizeType) => {
     switch (sizeType) {
-        case 'a4':
-            return A4Size
-        case 'a5':
-            return A5Size
-        default:
-            return A4Size
+    case 'a4':
+        return A4Size
+    case 'a5':
+        return A5Size
+    default:
+        return A4Size
     }
 }
 
