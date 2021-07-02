@@ -184,14 +184,14 @@ const useGeneratePDF = (props: {
             }
             tasksParams.push({
                 pdf: pdf,
-                ele: childEle
+                ele: childEle,
+                isLast: i === ele.children.length - 2
             })
         }
         tasksParams.push({
             pdf: pdf,
             ele: ele.children[ele.children.length - 1] as HTMLElement,
-            isFooter: true,
-            isLast: true
+            isFooter: true
         })
         for (const t of tasksParams) {
             await pdfAddEle(t)
