@@ -24,6 +24,7 @@ type PDFAddEleProps = {
     ele: HTMLElement,
     isHeader?: boolean,
     isFooter?: boolean
+    isLast?: boolean
 }
 
 export type PDFSizeType = 'a4' | 'a5'
@@ -55,7 +56,8 @@ const useGeneratePDF = (props: {
     }
     renderPageHeader?: (pdf: jspdf, currentPage: number) => void
     renderPageFooter?: (pdf: jspdf, currentPage: number) => void
-    renderPageFooterHeight?: number
+    renderPageFooterHeight?: number,
+    footerDisabled?: boolean // 禁止将页面末位元素当做footer渲染在每页底部
 }) => {
     const {
         padding = {
@@ -110,12 +112,19 @@ const useGeneratePDF = (props: {
         }
 
         const totalHeight = positionTop + actualEleHeight + padding.y.top + padding.y.bottom
-        if (totalHeight + footerEle.clientHeight > pageSize.height && !isHeader && !isFooter) {
-            await pdfAddEle({
-                pdf: pdf,
-                ele: footerEle,
-                isFooter: true
-            })
+        if (
+            !isHeader && !isFooter &&
+            (props.footerDisabled && !params.isLast) ?
+                totalHeight > pageSize.height :
+                totalHeight + footerEle.clientHeight > pageSize.height
+        ) {
+            if (!props.footerDisabled) {
+                await pdfAddEle({
+                    pdf: pdf,
+                    ele: footerEle,
+                    isFooter: true
+                })
+            }
             props.renderPageFooter && props.renderPageFooter(pdf, currentPage)
             props.renderPageHeader && props.renderPageHeader(pdf, currentPage)
 
@@ -181,7 +190,8 @@ const useGeneratePDF = (props: {
         tasksParams.push({
             pdf: pdf,
             ele: ele.children[ele.children.length - 1] as HTMLElement,
-            isFooter: true
+            isFooter: true,
+            isLast: true
         })
         for (const t of tasksParams) {
             await pdfAddEle(t)
