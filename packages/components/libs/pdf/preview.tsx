@@ -20,7 +20,8 @@ export interface PDFPreviewProps extends PropsWithChildren<any> {
     separate?: boolean
     titles?: string[]
     noPageNumber?: boolean
-    footerDisabled?: boolean
+    footerDisabled?: boolean,
+    noStickyTableHeader?: boolean
 }
 
 export type PDFPreviewType = 'download' | 'print' | 'all'
@@ -38,6 +39,7 @@ const PDFPreview = (props: PDFPreviewProps) => {
         elementIds: React.Children.map(props.children, child => child.props.id),
         separate: props.separate,
         footerDisabled: props.footerDisabled,
+        noStickyTableHeader: props.noStickyTableHeader,
         downloadCallback: (status, pdfs) => {
             setLoading(status === 'begin')
             if (status === 'finish') {
