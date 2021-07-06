@@ -97,10 +97,9 @@ const useGeneratePDF = (props: {
 
         let acturalOffsetTop
         if (params.inTable) {
-            const table = document.querySelector(`.${tableClass}`) as HTMLElement
-            const tableOffsetTop = table.offsetTop - table.parentElement.offsetTop + ele.offsetTop
+            const tableOffsetTop = currentTable.offsetTop - currentTable.parentElement.offsetTop + ele.offsetTop
 
-            acturalOffsetTop = acturalLength(tableOffsetTop, table.clientWidth)
+            acturalOffsetTop = acturalLength(tableOffsetTop, currentTable.clientWidth)
         } else {
             acturalOffsetTop = acturalLength(ele.offsetTop - ele.parentElement.offsetTop, ele.clientWidth)
         }
@@ -120,7 +119,8 @@ const useGeneratePDF = (props: {
             positionTop = acturalOffsetTop - (currentPage - 1) * pageSize.height + headerBottom * (currentPage - 1) + remainOffsetTop
         }
         if (params.inTable && ele.nodeName === 'THEAD' && positionTop < 0) {
-            positionTop = acturalLength(ele.clientHeight + ele.offsetTop - pageEle.offsetTop, ele.clientWidth)
+            positionTop = acturalLength(headerEle.clientHeight, headerEle.clientWidth) + padding.y.headerBottom
+            console.log(positionTop)
         }
 
         if (actualEleHeight <= 0) {
@@ -129,7 +129,6 @@ const useGeneratePDF = (props: {
         const tableHeader = currentTable?.querySelector('thead')
 
         if (params.inTable && ele.classList.contains(tableClass)) {
-            console.log(currentTable, tableHeader)
             const tableBody = currentTable.querySelector('tbody')
             if (tableHeader) {
                 await pdfAddEle({
@@ -177,6 +176,7 @@ const useGeneratePDF = (props: {
                 ele: headerEle,
                 isHeader: true
             })
+            console.log(tableHeader, !props.noStickyTableHeader)
             if (params.inTable && tableHeader && !props.noStickyTableHeader) {
                 pdfAddEle({
                     pdf,
@@ -184,7 +184,6 @@ const useGeneratePDF = (props: {
                     inTable: true,
                     isLast: params.isLast
                 })
-                remainOffsetTop -= padding.y.headerBottom
                 remainOffsetTop += acturalLength(tableHeader.scrollHeight, tableHeader.clientWidth)
             }
             await pdfAddEle({
