@@ -70,7 +70,7 @@ const useGeneratePDF = (props: {
             y: {
                 top: 15,
                 bottom: 10,
-                headerBottom: 5
+                headerBottom: 15
             }
         },
         renderPageFooterHeight = 15,
@@ -196,7 +196,9 @@ const useGeneratePDF = (props: {
             //     scale: 2
             // })
             // pdf.addImage(canvas.toDataURL('image/jpeg', 1), 'JPEG', padding.x, positionTop + padding.y.top, pageSize.width - 2 * padding.x, actualEleHeight)
-            const imgData = await htmlToImage.toSvg(ele)
+            const imgData = await htmlToImage.toSvg(ele, {
+                quality: 1
+            })
             return new Promise(resolve => {
                 const img = new Image()
                 img.src = imgData
