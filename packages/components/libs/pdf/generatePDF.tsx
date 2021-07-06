@@ -1,4 +1,3 @@
-import React from 'react'
 import jspdf from 'jspdf'
 import '../static/pdf.less'
 import axios from 'axios'
@@ -359,8 +358,7 @@ const useGeneratePDF = (props: {
                     const pdf = pdfs[i]
                     const iframe = document.createElement('iframe')
                     iframe.hidden = true
-                    const url = URL.createObjectURL(pdf.output('blob'))
-                    iframe.src = url
+                    iframe.src = URL.createObjectURL(pdf.output('blob'))
                     w.document.body.appendChild(iframe)
                     iframe.contentWindow.print()
                 }

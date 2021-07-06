@@ -15,6 +15,7 @@
       "es5",
       "dom"
     ],
+    "types": ["html-to-image"],
     "noEmit": false,
     "skipLibCheck": true
   },
