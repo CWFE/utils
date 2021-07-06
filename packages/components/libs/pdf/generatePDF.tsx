@@ -2,6 +2,7 @@ import jspdf from 'jspdf'
 import '../static/pdf.less'
 import axios from 'axios'
 import * as htmlToImage from 'html-to-image'
+import html2canvas from 'html2canvas'
 
 type DownloadStatus = 'begin' | 'finish'
 
@@ -120,7 +121,6 @@ const useGeneratePDF = (props: {
         }
         if (params.inTable && ele.nodeName === 'THEAD' && positionTop < 0) {
             positionTop = acturalLength(headerEle.clientHeight, headerEle.clientWidth) + padding.y.headerBottom
-            console.log(positionTop)
         }
 
         if (actualEleHeight <= 0) {
@@ -176,7 +176,6 @@ const useGeneratePDF = (props: {
                 ele: headerEle,
                 isHeader: true
             })
-            console.log(tableHeader, !props.noStickyTableHeader)
             if (params.inTable && tableHeader && !props.noStickyTableHeader) {
                 pdfAddEle({
                     pdf,
@@ -193,6 +192,10 @@ const useGeneratePDF = (props: {
             })
 
         } else {
+            // const canvas = await html2canvas(ele, {
+            //     scale: 2
+            // })
+            // pdf.addImage(canvas.toDataURL('image/jpeg', 1), 'JPEG', padding.x, positionTop + padding.y.top, pageSize.width - 2 * padding.x, actualEleHeight)
             const imgData = await htmlToImage.toSvg(ele)
             return new Promise(resolve => {
                 const img = new Image()
