@@ -130,9 +130,7 @@ const useGeneratePDF = (props: {
 
         if (params.inTable && ele.classList.contains(tableClass)) {
             const tableBody = currentTable.querySelector('tbody')
-            const firstBodyTr = tableBody.children?.[0]
-            const tTotalHeight = positionTop + acturalLength(firstBodyTr.clientTop) + padding.y.top + padding.y.bottom + headerEleBottom
-            if (tableHeader && tTotalHeight < pageSize.height) {
+            if (tableHeader) {
                 await pdfAddEle({
                     pdf: pdf,
                     ele: tableHeader,
@@ -151,13 +149,21 @@ const useGeneratePDF = (props: {
             }
             return
         }
-        let totalHeight = positionTop + actualEleHeight + padding.y.top + padding.y.bottom + headerEleBottom
+        let totalHeight = positionTop + actualEleHeight + padding.y.top + padding.y.bottom + headerEleBottom + padding.y.bottom
         if (!props.footerDisabled || params.isLast) {
             totalHeight += footerEle.clientHeight
         }
+        if (params.inTable && ele.nodeName === 'THEAD') {
+            const firstBodyTr = currentTable.querySelector('tbody').querySelector('tr')
+            totalHeight += acturalLength(firstBodyTr.clientHeight)
+
+            if (totalHeight > pageSize.height) {
+                return
+            }
+        }
 
         if (
-            !isHeader && !isFooter && parseFloat(`${totalHeight}`) > pageSize.height
+            !isHeader && !isFooter && totalHeight > pageSize.height
         ) {
             if (!props.footerDisabled) {
                 await pdfAddEle({
@@ -232,7 +238,7 @@ const useGeneratePDF = (props: {
 
         const firstEle = ele.children?.[0] as HTMLElement
         const secondEle = ele.children?.[1] as HTMLElement
-        if (!secondEle) {
+        if (!secondEle || !firstEle.clientHeight) {
             headerEleBottom = 0
         } else {
             headerEleBottom = acturalLength(secondEle.offsetTop - firstEle.offsetTop - firstEle.offsetHeight)
