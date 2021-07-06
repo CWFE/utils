@@ -29,6 +29,7 @@ type PDFAddEleProps = {
 }
 let currentTable: HTMLElement
 let pageEle: HTMLElement
+let headerEleBottom: number
 
 export type PDFSizeType = 'a4' | 'a5'
 
@@ -54,7 +55,6 @@ const useGeneratePDF = (props: {
         y: {
             top: number
             bottom: number
-            headerBottom: number
         }
     }
     renderPageHeader?: (pdf: jspdf, currentPage: number) => void
@@ -78,9 +78,9 @@ const useGeneratePDF = (props: {
     } = props
     const pageSize = getSize(props.sizeType)
 
-    const acturalLength = (length: number, eleWidth: number) => {
+    const acturalLength = (length: number) => {
         const pageSize = getSize(props.sizeType)
-        return (pageSize.width - 2 * padding.x) / eleWidth * length
+        return (pageSize.width - 2 * padding.x) / pageEle.clientWidth * length
     }
 
     let remainOffsetTop = 0
@@ -100,11 +100,11 @@ const useGeneratePDF = (props: {
         if (params.inTable) {
             const tableOffsetTop = currentTable.offsetTop - currentTable.parentElement.offsetTop + ele.offsetTop
 
-            acturalOffsetTop = acturalLength(tableOffsetTop, currentTable.clientWidth)
+            acturalOffsetTop = acturalLength(tableOffsetTop)
         } else {
-            acturalOffsetTop = acturalLength(ele.offsetTop - ele.parentElement.offsetTop, ele.clientWidth)
+            acturalOffsetTop = acturalLength(ele.offsetTop - ele.parentElement.offsetTop)
         }
-        const actualEleHeight = acturalLength(ele.clientHeight, ele.clientWidth)
+        const actualEleHeight = acturalLength(ele.clientHeight)
 
         let positionTop = 0
 
@@ -116,11 +116,11 @@ const useGeneratePDF = (props: {
                 positionTop -= renderPageFooterHeight
             }
         } else {
-            const headerBottom = acturalLength(headerEle.offsetTop - pageEle.offsetTop, ele.clientWidth) + acturalLength(headerEle.clientHeight, ele.clientWidth)
+            const headerBottom = acturalLength(headerEle.offsetTop - pageEle.offsetTop) + acturalLength(headerEle.clientHeight)
             positionTop = acturalOffsetTop - (currentPage - 1) * pageSize.height + headerBottom * (currentPage - 1) + remainOffsetTop
         }
         if (params.inTable && ele.nodeName === 'THEAD' && positionTop < 0) {
-            positionTop = acturalLength(headerEle.clientHeight, headerEle.clientWidth) + padding.y.headerBottom
+            positionTop = acturalLength(headerEle.clientHeight) + headerEleBottom
         }
 
         if (actualEleHeight <= 0) {
@@ -130,7 +130,9 @@ const useGeneratePDF = (props: {
 
         if (params.inTable && ele.classList.contains(tableClass)) {
             const tableBody = currentTable.querySelector('tbody')
-            if (tableHeader) {
+            const firstBodyTr = tableBody.children?.[0]
+            const tTotalHeight = positionTop + acturalLength(firstBodyTr.clientTop) + padding.y.top + padding.y.bottom + headerEleBottom
+            if (tableHeader && tTotalHeight < pageSize.height) {
                 await pdfAddEle({
                     pdf: pdf,
                     ele: tableHeader,
@@ -149,7 +151,7 @@ const useGeneratePDF = (props: {
             }
             return
         }
-        let totalHeight = positionTop + actualEleHeight + padding.y.top + padding.y.bottom
+        let totalHeight = positionTop + actualEleHeight + padding.y.top + padding.y.bottom + headerEleBottom
         if (!props.footerDisabled || params.isLast) {
             totalHeight += footerEle.clientHeight
         }
@@ -170,7 +172,7 @@ const useGeneratePDF = (props: {
             pdf.addPage()
             currentPage += 1
             remainOffsetTop += pageSize.height - positionTop
-            remainOffsetTop += padding.y.headerBottom
+            remainOffsetTop += headerEleBottom
             await pdfAddEle({
                 pdf: pdf,
                 ele: headerEle,
@@ -183,7 +185,8 @@ const useGeneratePDF = (props: {
                     inTable: true,
                     isLast: params.isLast
                 })
-                remainOffsetTop += acturalLength(tableHeader.scrollHeight, tableHeader.clientWidth)
+                console.log(tableHeader)
+                remainOffsetTop += acturalLength(tableHeader.clientHeight)
             }
             await pdfAddEle({
                 pdf: pdf,
@@ -225,8 +228,16 @@ const useGeneratePDF = (props: {
 
     const makePDF = async (pdf: jspdf, ele: HTMLElement) => {
         currentPage = 1
-        remainOffsetTop = 0
         pageEle = ele
+
+        const firstEle = ele.children?.[0] as HTMLElement
+        const secondEle = ele.children?.[1] as HTMLElement
+        if (!secondEle) {
+            headerEleBottom = 0
+        } else {
+            headerEleBottom = acturalLength(secondEle.offsetTop - firstEle.offsetTop - firstEle.offsetHeight)
+        }
+        remainOffsetTop = headerEleBottom
         const tasksParams: PDFAddEleProps[] = [{
             pdf: pdf,
             ele: ele.children[0] as HTMLElement,
