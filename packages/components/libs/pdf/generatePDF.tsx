@@ -27,7 +27,7 @@ type PDFAddEleProps = {
     isLast?: boolean // 是否为末位元素（除页尾，即是否为倒数第二个元素）
     inTable?: boolean
 }
-let tableHeader: HTMLElement
+let currentTable: HTMLElement
 let pageEle: HTMLElement
 
 export type PDFSizeType = 'a4' | 'a5'
@@ -127,9 +127,11 @@ const useGeneratePDF = (props: {
         if (actualEleHeight <= 0) {
             return
         }
-        if (ele.classList.contains(tableClass)) {
-            const tableBody = ele.querySelector('tbody')
-            tableHeader = ele.querySelector('thead')
+        const tableHeader = currentTable?.querySelector('thead')
+
+        if (params.inTable && ele.classList.contains(tableClass)) {
+            console.log(currentTable, tableHeader)
+            const tableBody = currentTable.querySelector('tbody')
             if (tableHeader) {
                 await pdfAddEle({
                     pdf: pdf,
@@ -238,11 +240,16 @@ const useGeneratePDF = (props: {
             if (i === ele.children.length - 1) {
                 break
             }
-            tasksParams.push({
+            const params: PDFAddEleProps = {
                 pdf: pdf,
                 ele: childEle,
                 isLast: i === ele.children.length - 2
-            })
+            }
+            if (childEle.classList.contains(tableClass)) {
+                params.inTable = true
+                currentTable = childEle
+            }
+            tasksParams.push(params)
         }
         tasksParams.push({
             pdf: pdf,
