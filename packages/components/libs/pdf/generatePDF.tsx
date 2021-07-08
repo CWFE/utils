@@ -2,7 +2,7 @@ import jspdf from 'jspdf'
 import '../static/pdf.less'
 import axios from 'axios'
 import * as htmlToImage from 'html-to-image'
-import html2canvas from 'html2canvas'
+import domToImage from 'dom-to-image'
 
 type DownloadStatus = 'begin' | 'finish'
 
@@ -104,7 +104,7 @@ const useGeneratePDF = (props: {
         } else {
             acturalOffsetTop = acturalLength(ele.offsetTop - ele.parentElement.offsetTop)
         }
-        const actualEleHeight = acturalLength(ele.clientHeight)
+        const actualEleHeight = acturalLength(ele?.clientHeight)
 
         let positionTop = 0
 
@@ -116,11 +116,11 @@ const useGeneratePDF = (props: {
                 positionTop -= renderPageFooterHeight
             }
         } else {
-            const headerBottom = acturalLength(headerEle.offsetTop - pageEle.offsetTop) + acturalLength(headerEle.clientHeight)
+            const headerBottom = acturalLength(headerEle.offsetTop - pageEle.offsetTop) + acturalLength(headerEle?.clientHeight)
             positionTop = acturalOffsetTop - (currentPage - 1) * pageSize.height + headerBottom * (currentPage - 1) + remainOffsetTop
         }
         if (params.inTable && ele.nodeName === 'THEAD' && positionTop < 0) {
-            positionTop = acturalLength(headerEle.clientHeight) + headerEleBottom
+            positionTop = acturalLength(headerEle?.clientHeight) + headerEleBottom
         }
 
         if (actualEleHeight <= 0) {
@@ -151,11 +151,11 @@ const useGeneratePDF = (props: {
         }
         let totalHeight = positionTop + actualEleHeight + padding.y.top + padding.y.bottom + headerEleBottom + padding.y.bottom
         if (!props.footerDisabled || params.isLast) {
-            totalHeight += footerEle.clientHeight
+            totalHeight += footerEle?.clientHeight
         }
         if (params.inTable && ele.nodeName === 'THEAD') {
             const firstBodyTr = currentTable.querySelector('tbody').querySelector('tr')
-            totalHeight += acturalLength(firstBodyTr.clientHeight)
+            totalHeight += acturalLength(firstBodyTr?.clientHeight)
 
             if (totalHeight > pageSize.height) {
                 return
@@ -192,7 +192,7 @@ const useGeneratePDF = (props: {
                     isLast: params.isLast
                 })
                 console.log(tableHeader)
-                remainOffsetTop += acturalLength(tableHeader.clientHeight)
+                remainOffsetTop += acturalLength(tableHeader?.clientHeight)
             }
             await pdfAddEle({
                 pdf: pdf,
@@ -205,9 +205,18 @@ const useGeneratePDF = (props: {
             //     scale: 2
             // })
             // pdf.addImage(canvas.toDataURL('image/jpeg', 1), 'JPEG', padding.x, positionTop + padding.y.top, pageSize.width - 2 * padding.x, actualEleHeight)
-            const imgData = await htmlToImage.toSvg(ele, {
-                quality: 1
-            })
+            const chromeInfo = navigator.userAgent.match(/Chrome\/[\d]+/)?.[0]
+            const version = chromeInfo ? parseInt(chromeInfo.split('/')?.[1]) : Number.MIN_SAFE_INTEGER
+            let imgData: string
+            if (version <= 49) {
+                imgData = await domToImage.toSvg(ele, {
+                    quality: 1
+                })
+            } else {
+                imgData = await htmlToImage.toSvg(ele, {
+                    quality: 1
+                })
+            }
             return new Promise(resolve => {
                 const img = new Image()
                 img.src = imgData
@@ -238,7 +247,7 @@ const useGeneratePDF = (props: {
 
         const firstEle = ele.children?.[0] as HTMLElement
         const secondEle = ele.children?.[1] as HTMLElement
-        if (!secondEle || !firstEle.clientHeight) {
+        if (!secondEle || !firstEle?.clientHeight) {
             headerEleBottom = 0
         } else {
             headerEleBottom = acturalLength(secondEle.offsetTop - firstEle.offsetTop - firstEle.offsetHeight)
