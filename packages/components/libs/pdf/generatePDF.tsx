@@ -30,6 +30,7 @@ type PDFAddEleProps = {
 let currentTable: HTMLElement
 let pageEle: HTMLElement
 let headerEleBottom: number
+let currentRepeat: number
 
 export type PDFSizeType = 'a4' | 'a5'
 
@@ -95,6 +96,7 @@ const useGeneratePDF = (props: {
         } = params
         const headerEle = pageEle.children[0] as HTMLElement
         const footerEle = pageEle.children[pageEle.children.length - 1] as HTMLElement
+        const cPage = pdf.getCurrentPageInfo().pageNumber
 
         let acturalOffsetTop
         if (params.inTable) {
@@ -174,9 +176,13 @@ const useGeneratePDF = (props: {
             }
             props.renderPageFooter && props.renderPageFooter(pdf, currentPage)
             props.renderPageHeader && props.renderPageHeader(pdf, currentPage)
-
-            pdf.addPage()
             currentPage += 1
+
+            for (let i = 0; i < currentRepeat; i ++) {
+                pdf.insertPage(cPage + currentPage * i + 1)
+            }
+            pdf.setPage(cPage + 1)
+
             remainOffsetTop += pageSize.height - positionTop
             remainOffsetTop += headerEleBottom
             await pdfAddEle({
@@ -191,7 +197,6 @@ const useGeneratePDF = (props: {
                     inTable: true,
                     isLast: params.isLast
                 })
-                console.log(tableHeader)
                 remainOffsetTop += acturalLength(tableHeader?.clientHeight)
             }
             await pdfAddEle({
@@ -233,7 +238,11 @@ const useGeneratePDF = (props: {
                     // a.href = canvas.toDataURL('png', 1)
 
                     // a.click()
-                    pdf.addImage(canvas.toDataURL('image/jpeg', 1), 'JPEG', padding.x, positionTop + padding.y.top, pageSize.width - 2 * padding.x, actualEleHeight)
+                    for (let i = 0; i < currentRepeat; i ++) {
+                        pdf.setPage(cPage + (currentPage * i))
+                        pdf.addImage(canvas.toDataURL('image/jpeg', 1), 'JPEG', padding.x, positionTop + padding.y.top, pageSize.width - 2 * padding.x, actualEleHeight)
+                    }
+                    pdf.setPage(cPage)
 
                     resolve(0)
                 }
@@ -313,7 +322,14 @@ const useGeneratePDF = (props: {
                 pdf.setFont('heiti')
             }
             const ele = document.getElementById(trueIds[i])
+            currentRepeat = parseInt(ele.getAttribute('data-repeat') || '1')
+            for (let i = 0; i < currentRepeat - 1; i ++) {
+                pdf.addPage()
+            }
+            pdf.setPage(pdf.getNumberOfPages() - currentRepeat + 1)
+
             await makePDF(pdf, ele)
+
             if (i !== trueIds.length - 1 && !props.separate) {
                 pdf.addPage()
             }
