@@ -6,7 +6,8 @@ example/dist
 yarn-error.log
 
 packages/*/node_modules
-packages/*/src
+packages/components/src
+packages/utils/src
 .idea
 
 lerna-debug.log

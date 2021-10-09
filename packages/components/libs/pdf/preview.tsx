@@ -1,13 +1,14 @@
 import React, { useMemo } from 'react'
 import { Button, Spin } from 'antd'
 import { PropsWithChildren } from 'react'
-import useGeneratePDF, { PDFSizeType } from './generatePDF'
+import useGeneratePDF, { PDFSizeType, PDFTransformPlugin } from './generatePDF'
 import jsPDF from 'jspdf'
 import _ from 'lodash'
 
 export interface PDFPreviewProps extends PropsWithChildren<any> {
     onCancel: () => void
     afterPrint?: () => void
+    plugins?: PDFTransformPlugin[]
     done?: (pdfs: jsPDF[]) => void
     previewType?: PDFPreviewType
     paddingX?: number
@@ -68,9 +69,9 @@ const PDFPreview = (props: PDFPreviewProps) => {
 
     const _action = () => {
         if (previewType === 'download') {
-            download(props.pdfUrls)
+            download(props.pdfUrls, undefined, props.plugins)
         } else {
-            print(props.pdfUrls)
+            print(props.pdfUrls, undefined, props.plugins)
         }
     }
 
@@ -94,8 +95,8 @@ const PDFPreview = (props: PDFPreviewProps) => {
                     {
                         previewType === 'all' && (
                             <>
-                                <Button type='primary' style={{ marginRight: '20px' }} onClick={() => download(props.pdfUrls)}>下载</Button>
-                                <Button type='primary' onClick={() => print(props.pdfUrls)}>打印</Button>
+                                <Button type='primary' style={{ marginRight: '20px' }} onClick={() => download(props.pdfUrls, undefined, props.plugins)}>下载</Button>
+                                <Button type='primary' onClick={() => print(props.pdfUrls, undefined, props.plugins)}>打印</Button>
                             </>
                         )
                     }

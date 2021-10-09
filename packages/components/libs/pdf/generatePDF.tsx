@@ -33,6 +33,7 @@ let headerEleBottom: number
 let currentRepeat: number
 
 export type PDFSizeType = 'a4' | 'a5'
+export type PDFTransformPlugin = (pdfs: jspdf) => Promise<void>
 
 const getSize = (sizeType?: PDFSizeType) => {
     switch (sizeType) {
@@ -250,9 +251,17 @@ const useGeneratePDF = (props: {
         }
     }
 
-    const makePDF = async (pdf: jspdf, ele: HTMLElement) => {
+    const makePDF = async (pdf: jspdf, ele: HTMLElement, plugins?: PDFTransformPlugin[]) => {
         currentPage = 1
         pageEle = ele
+
+        const usePlugins = async () => {
+            if (plugins?.length) {
+                for (const plugin of plugins) {
+                    await plugin(pdf)
+                }
+            }
+        }
 
         const firstEle = ele.children?.[0] as HTMLElement
         const secondEle = ele.children?.[1] as HTMLElement
@@ -301,10 +310,13 @@ const useGeneratePDF = (props: {
 
         props.renderPageHeader && props.renderPageHeader(pdf, currentPage)
         props.renderPageFooter && props.renderPageFooter(pdf, currentPage)
+
+        await usePlugins()
+
         return pdf
     }
 
-    const makePDFs = async (ids?: string[]) => {
+    const makePDFs = async (ids?: string[], plugins?: PDFTransformPlugin[]) => {
         const pdfs: jspdf[] = []
         let pdf: jspdf = new jspdf('p', 'pt', props.sizeType)
         const { heitiString } = await import('../static/heiti')
@@ -312,6 +324,7 @@ const useGeneratePDF = (props: {
         pdf.addFont('heiti.ttf', 'heiti', 'normal')
         pdf.setFont('heiti')
         const trueIds = ids || props.elementIds
+
 
         for (let i = 0; i < trueIds.length; i++) {
             if (props.separate) {
@@ -328,7 +341,7 @@ const useGeneratePDF = (props: {
             }
             pdf.setPage(pdf.getNumberOfPages() - currentRepeat + 1)
 
-            await makePDF(pdf, ele)
+            await makePDF(pdf, ele, plugins)
 
             if (i !== trueIds.length - 1 && !props.separate) {
                 pdf.addPage()
@@ -340,6 +353,7 @@ const useGeneratePDF = (props: {
         if (!props.separate) {
             pdfs.push(pdf)
         }
+        
         return pdfs
     }
 
@@ -355,18 +369,17 @@ const useGeneratePDF = (props: {
         downloadElement = null
     }
 
-    const _download = async (urls?: string[], ids?: string[]) => {
+    const _download = async (urls?: string[], ids?: string[], plugins?: PDFTransformPlugin[]) => {
         if (urls?.length) {
             for (let i = 0; i < urls.length; i++) {
                 const res = downloadUrl(urls[i], props.titles?.length > i ? props.titles[i] : '检验报告.pdf')
-
             }
             props.downloadCallback && props.downloadCallback('finish')
         } else {
             props.downloadCallback && props.downloadCallback('begin')
             let pdfs: jspdf[] = []
             try {
-                pdfs = await makePDFs(ids)
+                pdfs = await makePDFs(ids, plugins)
                 for (let i = 0; i < pdfs.length; i++) {
                     const pdf = pdfs[i]
                     const title = props.titles?.length > i ? props.titles[i] : '检验报告'
@@ -379,7 +392,7 @@ const useGeneratePDF = (props: {
             }
         }
     }
-    const _print = async (urls?: string[], ids?: string[]) => {
+    const _print = async (urls?: string[], ids?: string[], plugins?: PDFTransformPlugin[]) => {
         if (urls?.length) {
             for (const url of urls) {
                 const w = window.open()
@@ -396,7 +409,7 @@ const useGeneratePDF = (props: {
             props.downloadCallback && props.downloadCallback('begin')
             let pdfs: jspdf[] = []
             try {
-                pdfs = await makePDFs(ids)
+                pdfs = await makePDFs(ids, plugins)
 
                 for (let i = 0; i < pdfs.length; i++) {
                     const w = window.open()
@@ -416,10 +429,10 @@ const useGeneratePDF = (props: {
             }
         }
     }
-    const _getPDFs = async (ids?: string[]): Promise<jspdf[]> => {
+    const _getPDFs = async (ids?: string[], plugins?: PDFTransformPlugin[]): Promise<jspdf[]> => {
         props.downloadCallback && props.downloadCallback('begin')
         try {
-            const pdfs = await makePDFs(ids)
+            const pdfs = await makePDFs(ids, plugins)
             return Promise.resolve(pdfs)
         } catch (e) {
             return Promise.resolve([])
