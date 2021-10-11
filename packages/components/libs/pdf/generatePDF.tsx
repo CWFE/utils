@@ -165,7 +165,8 @@ const useGeneratePDF = (props: {
             }
         }
         
-        if (ele.classList.contains('pdf-seperator')) {
+        const needSeperate = ele.classList.contains('pdf-seperator')
+        if (needSeperate) {
             totalHeight = pageSize.height + 1
             ele.classList.remove('pdf-seperator')
         }
@@ -210,7 +211,9 @@ const useGeneratePDF = (props: {
                 ele: ele,
                 inTable: params.inTable
             })
-
+            if (needSeperate) {
+                ele.classList.add('pdf-seperator')
+            }
         } else {
             // const canvas = await html2canvas(ele, {
             //     scale: 2
