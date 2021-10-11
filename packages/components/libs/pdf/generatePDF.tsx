@@ -164,6 +164,11 @@ const useGeneratePDF = (props: {
                 return
             }
         }
+        
+        if (ele.classList.contains('pdf-seperator')) {
+            totalHeight = pageSize.height + 1
+            ele.classList.remove('pdf-seperator')
+        }
 
         if (
             !isHeader && !isFooter && totalHeight > pageSize.height

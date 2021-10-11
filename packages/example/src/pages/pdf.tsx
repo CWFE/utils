@@ -2,7 +2,7 @@
  * @Date: 2021-10-08 16:58:19
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2021-10-09 13:11:48
+ * @LastEditTime: 2021-10-11 09:51:27
  * @Description: file content
  */
 import React from 'react'
@@ -24,9 +24,10 @@ const PdfExample = () => {
             })]}
         >
             <div id='pdf'>
+                <div/>
                 {
                     [...Array(12).keys()].map((idx) => (
-                        <div key={idx} style={{
+                        <div key={idx} className={idx % 3 === 2 ? 'pdf-seperator' : ''} style={{
                             backgroundColor: `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255})`,
                             width: '100%',
                             height: 80,
@@ -34,6 +35,7 @@ const PdfExample = () => {
                         }} />
                     ))
                 }
+                <div />
             </div>
         </PDFPreview>
     )
