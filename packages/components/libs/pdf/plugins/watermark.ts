@@ -2,7 +2,7 @@
  * @Date: 2021-10-09 09:49:46
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2021-10-09 12:10:30
+ * @LastEditTime: 2021-10-29 11:46:14
  * @Description: file content
  */
 
@@ -17,17 +17,19 @@ type PDFWatermarkSettings = {
         yTransform?: ((idx: number) => number) | number
     }
     angle?: number
-    color?: [number, number, number, number]
+    color?: string
     fontSize?: number
     text: string
+    opacity?: number
 }
 
 const PDFWatermarkPlugin = (settings: PDFWatermarkSettings) => async (pdf: jsPDF) => {
     const {
         density,
         angle = 45,
-        color = [0, 0, 0, 0.7],
-        fontSize = 15
+        color = '#ccc',
+        fontSize = 15,
+        opacity = 1
     } = settings
     const {
         x = 3,
@@ -38,6 +40,11 @@ const PDFWatermarkPlugin = (settings: PDFWatermarkSettings) => async (pdf: jsPDF
     try {
         for (let p = 0; p < pdf.getNumberOfPages(); p ++) {
             pdf.setPage(p)
+            pdf.saveGraphicsState()
+            pdf.setGState(pdf.GState({
+                opacity: 0.7
+            }))
+            console.log('123')
             for (let i = 0; i < x; i++) {
                 
                 for (let j = 0; j < y; j++) {
@@ -46,13 +53,14 @@ const PDFWatermarkPlugin = (settings: PDFWatermarkSettings) => async (pdf: jsPDF
                     const yTrans = typeof yTransform === 'number' ? yTransform : yTransform(i)
                     const ty = (pdf.internal.pageSize.height / (y + 1)) * (j + 1) + yTrans
                     pdf
-                        .setTextColor(...color)
+                        .setTextColor(color)
                         .setFontSize(fontSize)
                         .text(settings.text, tx, ty, {
                             angle: angle
                         })
                 }
             }
+            pdf.restoreGraphicsState()
         }
 
     } catch (e) {
