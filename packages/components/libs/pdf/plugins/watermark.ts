@@ -2,7 +2,7 @@
  * @Date: 2021-10-09 09:49:46
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2021-10-29 11:46:14
+ * @LastEditTime: 2021-10-29 11:48:53
  * @Description: file content
  */
 
@@ -29,7 +29,7 @@ const PDFWatermarkPlugin = (settings: PDFWatermarkSettings) => async (pdf: jsPDF
         angle = 45,
         color = '#ccc',
         fontSize = 15,
-        opacity = 1
+        opacity = 0.7
     } = settings
     const {
         x = 3,
@@ -42,9 +42,8 @@ const PDFWatermarkPlugin = (settings: PDFWatermarkSettings) => async (pdf: jsPDF
             pdf.setPage(p)
             pdf.saveGraphicsState()
             pdf.setGState(pdf.GState({
-                opacity: 0.7
+                opacity: opacity
             }))
-            console.log('123')
             for (let i = 0; i < x; i++) {
                 
                 for (let j = 0; j < y; j++) {
