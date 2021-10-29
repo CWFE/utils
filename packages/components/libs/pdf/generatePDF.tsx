@@ -349,7 +349,7 @@ const useGeneratePDF = (props: {
             }
             pdf.setPage(pdf.getNumberOfPages() - currentRepeat + 1)
 
-            await makePDF(pdf, ele, plugins[i])
+            await makePDF(pdf, ele, plugins?.[i])
 
             if (i !== trueIds.length - 1 && !props.separate) {
                 pdf.addPage()
