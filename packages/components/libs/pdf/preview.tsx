@@ -8,7 +8,7 @@ import _ from 'lodash'
 export interface PDFPreviewProps extends PropsWithChildren<any> {
     onCancel: () => void
     afterPrint?: () => void
-    plugins?: PDFTransformPlugin[]
+    plugins?: PDFTransformPlugin[][]
     done?: (pdfs: jsPDF[]) => void
     previewType?: PDFPreviewType
     paddingX?: number

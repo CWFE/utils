@@ -324,7 +324,7 @@ const useGeneratePDF = (props: {
         return pdf
     }
 
-    const makePDFs = async (ids?: string[], plugins?: PDFTransformPlugin[]) => {
+    const makePDFs = async (ids?: string[], plugins?: PDFTransformPlugin[][]) => {
         const pdfs: jspdf[] = []
         let pdf: jspdf = new jspdf('p', 'pt', props.sizeType)
         const { heitiString } = await import('../static/heiti')
@@ -349,7 +349,7 @@ const useGeneratePDF = (props: {
             }
             pdf.setPage(pdf.getNumberOfPages() - currentRepeat + 1)
 
-            await makePDF(pdf, ele, plugins)
+            await makePDF(pdf, ele, plugins[i])
 
             if (i !== trueIds.length - 1 && !props.separate) {
                 pdf.addPage()
@@ -377,7 +377,7 @@ const useGeneratePDF = (props: {
         downloadElement = null
     }
 
-    const _download = async (urls?: string[], ids?: string[], plugins?: PDFTransformPlugin[]) => {
+    const _download = async (urls?: string[], ids?: string[], plugins?: PDFTransformPlugin[][]) => {
         if (urls?.length) {
             for (let i = 0; i < urls.length; i++) {
                 const res = downloadUrl(urls[i], props.titles?.length > i ? props.titles[i] : '检验报告.pdf')
@@ -400,7 +400,7 @@ const useGeneratePDF = (props: {
             }
         }
     }
-    const _print = async (urls?: string[], ids?: string[], plugins?: PDFTransformPlugin[]) => {
+    const _print = async (urls?: string[], ids?: string[], plugins?: PDFTransformPlugin[][]) => {
         if (urls?.length) {
             for (const url of urls) {
                 const w = window.open()
@@ -437,7 +437,7 @@ const useGeneratePDF = (props: {
             }
         }
     }
-    const _getPDFs = async (ids?: string[], plugins?: PDFTransformPlugin[]): Promise<jspdf[]> => {
+    const _getPDFs = async (ids?: string[], plugins?: PDFTransformPlugin[][]): Promise<jspdf[]> => {
         props.downloadCallback && props.downloadCallback('begin')
         try {
             const pdfs = await makePDFs(ids, plugins)
