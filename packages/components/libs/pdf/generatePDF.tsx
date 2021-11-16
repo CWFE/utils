@@ -26,8 +26,8 @@ type PDFAddEleProps = {
     isFooter?: boolean
     isLast?: boolean // 是否为末位元素（除页尾，即是否为倒数第二个元素）
     inTable?: boolean
+    currentTable?: HTMLElement // 所处pdf-table
 }
-let currentTable: HTMLElement
 let pageEle: HTMLElement
 let headerEleBottom: number
 let currentRepeat: number
@@ -93,7 +93,7 @@ const useGeneratePDF = (props: {
             pdf,
             ele,
             isHeader = false,
-            isFooter = false
+            isFooter = false,
         } = params
         const headerEle = pageEle.children[0] as HTMLElement
         const footerEle = pageEle.children[pageEle.children.length - 1] as HTMLElement
@@ -101,7 +101,7 @@ const useGeneratePDF = (props: {
 
         let acturalOffsetTop
         if (params.inTable) {
-            const tableOffsetTop = currentTable.offsetTop - currentTable.parentElement.offsetTop + ele.offsetTop
+            const tableOffsetTop = params.currentTable?.offsetTop - params.currentTable.parentElement.offsetTop + ele.offsetTop
 
             acturalOffsetTop = acturalLength(tableOffsetTop)
         } else {
@@ -129,16 +129,17 @@ const useGeneratePDF = (props: {
         if (actualEleHeight <= 0) {
             return
         }
-        const tableHeader = currentTable?.querySelector('thead')
+        const tableHeader = params.currentTable?.querySelector('thead')
 
         if (params.inTable && ele.classList.contains(tableClass)) {
-            const tableBody = currentTable.querySelector('tbody')
+            const tableBody = params.currentTable?.querySelector('tbody')
             if (tableHeader) {
                 await pdfAddEle({
                     pdf: pdf,
                     ele: tableHeader,
                     inTable: true,
-                    isLast: params.isLast
+                    isLast: params.isLast,
+                    currentTable: params.currentTable
                 })
             }
             for (let i = 0; i < tableBody.children.length; i ++) {
@@ -147,7 +148,8 @@ const useGeneratePDF = (props: {
                     pdf: pdf,
                     ele: trEle,
                     inTable: true,
-                    isLast: params.isLast
+                    isLast: params.isLast,
+                    currentTable: params.currentTable
                 })
             }
             return
@@ -157,7 +159,7 @@ const useGeneratePDF = (props: {
             totalHeight += footerEle?.clientHeight
         }
         if (params.inTable && ele.nodeName === 'THEAD') {
-            const firstBodyTr = currentTable.querySelector('tbody').querySelector('tr')
+            const firstBodyTr = params.currentTable.querySelector('tbody').querySelector('tr')
             totalHeight += acturalLength(firstBodyTr?.clientHeight)
 
             if (totalHeight > pageSize.height) {
@@ -302,7 +304,7 @@ const useGeneratePDF = (props: {
             }
             if (childEle.classList.contains(tableClass)) {
                 params.inTable = true
-                currentTable = childEle
+                params.currentTable = childEle
             }
             tasksParams.push(params)
         }
