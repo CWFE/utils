@@ -204,14 +204,16 @@ const useGeneratePDF = (props: {
                     pdf,
                     ele: tableHeader,
                     inTable: true,
-                    isLast: params.isLast
+                    isLast: params.isLast,
+                    currentTable: params.currentTable
                 })
                 remainOffsetTop += acturalLength(tableHeader?.clientHeight)
             }
             await pdfAddEle({
                 pdf: pdf,
                 ele: ele,
-                inTable: params.inTable
+                inTable: params.inTable,
+                currentTable: params.currentTable
             })
             if (needSeperate) {
                 ele.classList.add('pdf-seperator')
