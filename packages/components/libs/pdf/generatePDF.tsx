@@ -95,6 +95,7 @@ const useGeneratePDF = (props: {
             isHeader = false,
             isFooter = false,
         } = params
+        console.log(ele)
         const headerEle = pageEle.children[0] as HTMLElement
         const footerEle = pageEle.children[pageEle.children.length - 1] as HTMLElement
         const cPage = pdf.getCurrentPageInfo().pageNumber
