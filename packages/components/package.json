@@ -15,7 +15,7 @@
         "react-img-editor": "^0.2.0"
     },
     "scripts": {
-        "prepublishOnly": "rm -rf src && tsc && cp -R libs/static src"
+        "prepublishOnly": "rm -rf src && tsc --module exnext && cp -R libs/static src"
     },
     "publishConfig": {
         "access": "public"
