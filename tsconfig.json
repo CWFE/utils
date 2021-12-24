@@ -1,14 +1,14 @@
 {
   "compileOnSave": true,
   "compilerOptions": {
-      "moduleResolution": "node",
+    "moduleResolution": "node",
     "declaration": true,
     "outDir": "src",
-    "sourceMap":  false,
+    "sourceMap": false,
     "noImplicitAny": true,
     "module": "CommonJS",
     "esModuleInterop": true,
-    "target": "es5",
+    "target": "esnext",
     "jsx": "react",
     "allowJs": true,
     "lib": [
@@ -16,7 +16,9 @@
       "es5",
       "dom"
     ],
-    "types": ["html-to-image"],
+    "types": [
+      "html-to-image"
+    ],
     "noEmit": false,
     "skipLibCheck": true
   },

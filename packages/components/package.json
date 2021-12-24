@@ -1,7 +1,15 @@
 {
     "name": "@cwfe/component",
+    "files": ["dist"],
     "version": "1.5.11",
-    "main": "./src/index.js",
+    "main": "./dist/index.js",
+    "module": "./dist/index.es.js",
+    "exports": {
+        ".": {
+            "import": "./dist/index.es.js",
+            "require": "./dist/index.js"
+        }
+    },
     "author": "喵大快救我 <wang0122xl@163.com>",
     "repository": "https://github.com/CWFE/utils.git",
     "private": false,
@@ -10,11 +18,11 @@
         "dom-to-image": "^2.6.0",
         "html-to-image": "^1.6.2",
         "html2canvas": "^1.0.0",
-        "jspdf": "^2.3.0",
-        "ramda": "^0.27.1",
+        "jspdf": "^2.5.0",
         "react-img-editor": "^0.2.0"
     },
     "scripts": {
+        "build": "vite build",
         "prepublishOnly": "rm -rf src && tsc --module esnext && cp -R libs/static src "
     },
     "publishConfig": {
@@ -25,7 +33,8 @@
         "@babel/preset-es2015": "^7.0.0-beta.53",
         "@types/antd": "^1.0.0",
         "@types/dom-to-image": "^2.6.2",
-        "@types/styled-components": "^5.1.7"
+        "@types/styled-components": "^5.1.7",
+        "vite": "^2.7.6"
     },
     "gitHead": "3dc9a155756168df2a072b203cef0bb1cc18c06d"
 }

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import { Button, Spin } from 'antd'
 import { PropsWithChildren } from 'react'
 import useGeneratePDF, { PDFSizeType, PDFTransformPlugin } from './generatePDF'
@@ -32,10 +32,10 @@ const PDFPreview = (props: PDFPreviewProps) => {
         previewType = 'print',
         afterPrint = _.noop,
         sizeType = 'a4'
-    } = props 
+    } = props
     const [loading, setLoading] = React.useState(false)
 
-    const { download, print, getPDFs } = useGeneratePDF({
+    const { download, print} = useGeneratePDF({
         titles: props.titles,
         elementIds: React.Children.map(props.children, child => child.props.id),
         separate: props.separate,
@@ -54,7 +54,7 @@ const PDFPreview = (props: PDFPreviewProps) => {
                 .text(`第${currentPage}页`, pdf.internal.pageSize.getWidth() - 42, pdf.internal.pageSize.getHeight() - 12)
         },
         // renderPageHeader: (pdf, size) => {
-        //     pdf 
+        //     pdf
         //         .setTextColor('#111')
         //         .setFontSize(8)
         //         .text(`第${pdf.getCurrentPageInfo().pageNumber}页`, size.width - 42, 10)
@@ -62,7 +62,7 @@ const PDFPreview = (props: PDFPreviewProps) => {
     })
 
     React.useEffect(() => {
-        window.onafterprint = (e: Event) => {
+        window.onafterprint = () => {
             afterPrint()
         }
     }, [props.afterPrint])

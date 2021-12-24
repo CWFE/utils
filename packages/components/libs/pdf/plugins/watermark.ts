@@ -7,7 +7,6 @@
  */
 
 import jsPDF from "jspdf"
-import { PDFTransformPlugin } from "../generatePDF"
 
 type PDFWatermarkSettings = {
     density?: {
@@ -45,7 +44,7 @@ const PDFWatermarkPlugin = (settings: PDFWatermarkSettings) => async (pdf: jsPDF
                 opacity: opacity
             }))
             for (let i = 0; i < x; i++) {
-                
+
                 for (let j = 0; j < y; j++) {
                     const xTrans = typeof xTransform === 'number' ? xTransform : xTransform(j)
                     const tx = (pdf.internal.pageSize.width / (x + 1)) * (i + 1) + xTrans
