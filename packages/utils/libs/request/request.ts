@@ -11,14 +11,12 @@ function checkObjType (obj: any, type: string) {
 
 let index = 0
 
-export type UtilAxiosRequestConfig = AxiosRequestConfig
-
 class Request {
     public axiosInstance: AxiosInstance
     public cancelTokenSources: {
         [url: string]: Canceler
     } = {}
-    public getCancelTokenKey = (config: Readonly<UtilAxiosRequestConfig>) => {
+    public getCancelTokenKey = (config: Readonly<AxiosRequestConfig>) => {
         let dataKey = ''
         if (checkObjType(config.data, 'FormData')) {
             if (config.data.entries) {
@@ -39,7 +37,7 @@ class Request {
         }
         return (config.method || 'GET')?.toUpperCase() + '?' + config.url + dataKey + JSON.stringify(config.params)
     }
-    public request = async function AxiosRequest<T = any> (config: UtilAxiosRequestConfig, retryCount?: number): Promise<AxiosResponse<T>> {
+    public request = async function AxiosRequest<T = any> (config: AxiosRequestConfig, retryCount?: number): Promise<AxiosResponse<T>> {
         try {
             // 执 行
             const response = await this.axiosInstance(config)

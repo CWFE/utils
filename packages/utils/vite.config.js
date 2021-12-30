@@ -9,7 +9,7 @@ module.exports = defineConfig({
             fileName: (format) => `util.${format}.js`
         },
         rollupOptions: {
-            external: ['axios' ,'react', 'ahooks']
+            external: ['axios' ,'react']
         }
     }
 })

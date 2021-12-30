@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
-import Axios from 'axios'
-import { RequestInstance, UtilAxiosRequestConfig } from './request'
+import Axios, { AxiosRequestConfig } from 'axios'
+import { RequestInstance } from './request'
 import { usePersistFn } from 'ahooks'
 
-type UseRequestProps = {
-    params: UtilAxiosRequestConfig
+interface UseRequestProps {
+    params: AxiosRequestConfig
     manual?: boolean,
     retry?: number,
     cancelCallback?: (e: Error) => void
@@ -12,7 +12,7 @@ type UseRequestProps = {
     needError?: boolean
 }
 
-export type RequestLoadData<T> = (options?: Partial<UtilAxiosRequestConfig>, retryCount?: number) => Promise<T>
+export type RequestLoadData<T> = (options?: Partial<UseRequestProps['params']>, retryCount?: number) => Promise<T>
 
 interface returnValue<T> {
     result?: T
@@ -33,9 +33,9 @@ export function useRequest<T> ({
     const [loading, setLoading] = useState(false)
     const [err, setErr] = useState<Error>()
 
-    const loadData = usePersistFn(async (options?: Partial<UtilAxiosRequestConfig>, retryCount?: number) => {
+    const loadData = usePersistFn(async (options?: Partial<UseRequestProps['params']>, retryCount?: number) => {
         setLoading(true)
-        const realParams: UtilAxiosRequestConfig = Object.assign(options || {}, params || {})
+        const realParams: UseRequestProps['params'] = Object.assign(options || {}, params || {})
         if (!realParams.url?.length) {
             return
         }
