@@ -1,12 +1,12 @@
 {
   "name": "@cwfe/util",
-  "version": "1.2.13-0",
+  "version": "1.2.13-1",
   "files": [
     "dist"
   ],
   "main": "./dist/util.umd.js",
   "module": "./dist/util.es.js",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/types/index.d.ts",
   "author": "喵大快救我 <wang0122xl@163.com>",
   "repository": "https://github.com/CWFE/utils.git",
   "private": false,
