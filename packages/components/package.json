@@ -3,7 +3,7 @@
   "files": [
     "dist"
   ],
-  "version": "1.5.12-2",
+  "version": "1.5.12-4",
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
   "exports": {

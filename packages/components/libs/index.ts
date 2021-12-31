@@ -9,6 +9,7 @@ import PDFPreview from './pdf/preview'
 import useGeneratePDF from './pdf/generatePDF'
 import imageEditor from './image-editor/imageEditorManager'
 import PDFWatermarkPlugin from './pdf/plugins/watermark'
+import './static/pdf.less'
 
 const plugins = {
     PDFWatermarkPlugin

@@ -1,5 +1,4 @@
 import jspdf from 'jspdf'
-import '../static/pdf.less'
 import axios from 'axios'
 import * as htmlToImage from 'html-to-image'
 import domToImage from 'dom-to-image'
@@ -167,7 +166,7 @@ const useGeneratePDF = (props: {
                 return
             }
         }
-        
+
         const needSeperate = ele.classList.contains('pdf-seperator')
         if (needSeperate) {
             totalHeight = pageSize.height + 1
@@ -366,7 +365,7 @@ const useGeneratePDF = (props: {
         if (!props.separate) {
             pdfs.push(pdf)
         }
-        
+
         return pdfs
     }
 
@@ -385,7 +384,7 @@ const useGeneratePDF = (props: {
     const _download = async (urls?: string[], ids?: string[], plugins?: PDFTransformPlugin[][]) => {
         if (urls?.length) {
             for (let i = 0; i < urls.length; i++) {
-                const res = downloadUrl(urls[i], props.titles?.length > i ? props.titles[i] : '检验报告.pdf')
+                downloadUrl(urls[i], props.titles?.length > i ? props.titles[i] : '检验报告.pdf')
             }
             props.downloadCallback && props.downloadCallback('finish')
         } else {

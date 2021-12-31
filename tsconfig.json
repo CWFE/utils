@@ -6,7 +6,7 @@
     "outDir": "src",
     "sourceMap": false,
     "noImplicitAny": true,
-    "module": "CommonJS",
+    "module": "system",
     "esModuleInterop": true,
     "target": "esnext",
     "jsx": "react",
