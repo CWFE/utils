@@ -6,35 +6,45 @@
  * @Description: file content
  */
 import React from 'react'
-import PDFPreview from '../../../components/libs/pdf/preview'
-import WatermarkPlugin from '../../../components/libs/pdf/plugins/watermark'
+import { PDFPreview } from '@cwfe/component'
+import { range } from 'lodash-es'
 
 const PdfExample = () => {
     return (
         <PDFPreview
-            onCancel={() => {}}
-            plugins={[WatermarkPlugin({
-                text: '测试水印',
-                density: {
-                    x: 1,
-                    y: 1,
-                    xTransform: -100
-                },
-                fontSize: 80
-            })]}
+            onCancel={ () => {
+            } }
         >
-            <div id='pdf'>
+            <div id="pdf">
                 <div/>
-                {
-                    [...Array(12).keys()].map((idx) => (
-                        <div key={idx} className={idx % 3 === 2 ? 'pdf-seperator' : ''} style={{
-                            backgroundColor: `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255})`,
-                            width: '100%',
-                            height: 80,
-                            marginBottom: 20
-                        }} />
-                    ))
-                }
+                <div/>
+                <div className='pdf-table py-4'>
+                    <table className="w-full border-collapse">
+                        <thead>
+                            <tr className='children:(border-6px border-red-500 px-4 py-3)'>
+                                <th>标题1</th>
+                                <th>标题2</th>
+                                <th>标题3</th>
+                                <th>标题4</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                range(80).map((num) => {
+                                    return <tr className='children:(border-6px border-red-500 px-4 py-3)' key={num}>
+                                        <td>{ num + '-1' }</td>
+                                        <td>{ num + '-2' }</td>
+                                        <td>{ num + '-3' }</td>
+                                        <td>{ num + '-4' }</td>
+                                    </tr>
+                                })
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <footer>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequuntur culpa, dignissimos dolorem doloremque dolores dolorum eaque esse impedit laborum minima minus neque qui quisquam quod rem repudiandae similique unde voluptatibus!
+                </footer>
                 <div />
             </div>
         </PDFPreview>

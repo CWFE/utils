@@ -2,6 +2,7 @@ import jspdf from 'jspdf'
 import axios from 'axios'
 import * as htmlToImage from 'html-to-image'
 import domToImage from 'dom-to-image'
+import { forEach } from 'lodash-es'
 
 type DownloadStatus = 'begin' | 'finish'
 
@@ -79,7 +80,7 @@ const useGeneratePDF = (props: {
     } = props
     const pageSize = getSize(props.sizeType)
 
-    const acturalLength = (length: number) => {
+    const actualLength = (length: number) => {
         const pageSize = getSize(props.sizeType)
         return (pageSize.width - 2 * padding.x) / pageEle.clientWidth * length
     }
@@ -94,36 +95,35 @@ const useGeneratePDF = (props: {
             isHeader = false,
             isFooter = false,
         } = params
-        console.log(ele)
         const headerEle = pageEle.children[0] as HTMLElement
         const footerEle = pageEle.children[pageEle.children.length - 1] as HTMLElement
         const cPage = pdf.getCurrentPageInfo().pageNumber
 
-        let acturalOffsetTop
+        let actualOffsetTop
         if (params.inTable) {
             const tableOffsetTop = params.currentTable?.offsetTop - params.currentTable.parentElement.offsetTop + ele.offsetTop
 
-            acturalOffsetTop = acturalLength(tableOffsetTop)
+            actualOffsetTop = actualLength(tableOffsetTop)
         } else {
-            acturalOffsetTop = acturalLength(ele.offsetTop - ele.parentElement.offsetTop)
+            actualOffsetTop = actualLength(ele.offsetTop - ele.parentElement.offsetTop)
         }
-        const actualEleHeight = acturalLength(ele?.clientHeight)
+        const actualEleHeight = actualLength(ele?.clientHeight)
 
         let positionTop = 0
 
         if (isHeader) {
-            positionTop = acturalOffsetTop
+            positionTop = actualOffsetTop
         } else if (isFooter) {
             positionTop = pageSize.height - (padding.y.top + padding.y.bottom) - actualEleHeight
             if (props.renderPageFooter) {
                 positionTop -= renderPageFooterHeight
             }
         } else {
-            const headerBottom = acturalLength(headerEle.offsetTop - pageEle.offsetTop) + acturalLength(headerEle?.clientHeight)
-            positionTop = acturalOffsetTop - (currentPage - 1) * pageSize.height + headerBottom * (currentPage - 1) + remainOffsetTop
+            const headerBottom = actualLength(headerEle.offsetTop - pageEle.offsetTop) + actualLength(headerEle?.clientHeight)
+            positionTop = actualOffsetTop - (currentPage - 1) * pageSize.height + headerBottom * (currentPage - 1) + remainOffsetTop
         }
         if (params.inTable && ele.nodeName === 'THEAD' && positionTop < 0) {
-            positionTop = acturalLength(headerEle?.clientHeight) + headerEleBottom
+            positionTop = actualLength(headerEle?.clientHeight) + headerEleBottom
         }
 
         if (actualEleHeight <= 0) {
@@ -160,7 +160,7 @@ const useGeneratePDF = (props: {
         }
         if (params.inTable && ele.nodeName === 'THEAD') {
             const firstBodyTr = params.currentTable.querySelector('tbody').querySelector('tr')
-            totalHeight += acturalLength(firstBodyTr?.clientHeight)
+            totalHeight += actualLength(firstBodyTr?.clientHeight)
 
             if (totalHeight > pageSize.height) {
                 return
@@ -207,7 +207,7 @@ const useGeneratePDF = (props: {
                     isLast: params.isLast,
                     currentTable: params.currentTable
                 })
-                remainOffsetTop += acturalLength(tableHeader?.clientHeight)
+                remainOffsetTop += actualLength(tableHeader?.clientHeight)
             }
             await pdfAddEle({
                 pdf: pdf,
@@ -280,7 +280,7 @@ const useGeneratePDF = (props: {
         if (!secondEle || !firstEle?.clientHeight) {
             headerEleBottom = 0
         } else {
-            headerEleBottom = acturalLength(secondEle.offsetTop - firstEle.offsetTop - firstEle.offsetHeight)
+            headerEleBottom = actualLength(secondEle.offsetTop - firstEle.offsetTop - firstEle.offsetHeight)
         }
         remainOffsetTop = headerEleBottom
         const tasksParams: PDFAddEleProps[] = [{
