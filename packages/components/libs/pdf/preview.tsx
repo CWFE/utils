@@ -2,7 +2,8 @@ import { Button, Spin } from 'antd'
 import React, { PropsWithChildren } from 'react'
 import useGeneratePDF, { PDFSizeType, PDFTransformPlugin } from './generatePDF'
 import jsPDF from 'jspdf'
-import noop from 'lodash/noop'
+import { noop } from 'lodash-es'
+import '../static/pdf.less'
 
 export interface PDFPreviewProps extends PropsWithChildren<any> {
     onCancel: () => void

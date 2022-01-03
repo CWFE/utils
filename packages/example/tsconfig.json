@@ -2,7 +2,8 @@
     "extends": "../../tsconfig.json",
     "compilerOptions": {
         "baseUrl": "./",
-        "downlevelIteration": true
+        "downlevelIteration": true,
+        "types": ["@vitejs/plugin-react", "@cwfe/component", "vite"],
     },
     "include": [
         "src/**/*",

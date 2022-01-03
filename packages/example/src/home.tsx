@@ -10,18 +10,16 @@ import React from 'react'
 import { Link, Route } from 'react-router-dom'
 
 const Home = () => {
-    return (
-        <>
-            <nav>
-                <ul>
-                    <li>
-                        <Link to='/pdf'>pdf</Link>
-                    </li>
-                    <li>ceshi</li>
-                </ul>
-            </nav>
-        </>
-    )
+    return <>
+        <nav>
+            <ul>
+                <li>
+                    <Link to="/pdf">pdf</Link>
+                </li>
+                <li>ceshi</li>
+            </ul>
+        </nav>
+    </>
 }
 
 export default Home

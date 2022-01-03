@@ -6,26 +6,22 @@
  * @Description: file content
  */
 
-import React, { useEffect } from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom'
-import { BrowserRouter, Route, Link, Switch } from 'react-router-dom'
+import { BrowserRouter, Route, Link, Routes } from 'react-router-dom'
+import 'antd/dist/antd.less'
 import Home from './home'
 import PdfExample from './pages/pdf'
+import 'virtual:windi.css'
 
 const App = () => {
 
     return (
         <BrowserRouter>
-            <Switch>
-                <Route path='/' exact>
-                    <Home />
-                </Route>
-
-
-                <Route path='/pdf'>
-                    <PdfExample />
-                </Route>
-            </Switch>
+            <Routes>
+                <Route path="/" element={ <Home /> } />
+                <Route path="/pdf" element={ <PdfExample /> } />
+            </Routes>
         </BrowserRouter>
     )
 }
