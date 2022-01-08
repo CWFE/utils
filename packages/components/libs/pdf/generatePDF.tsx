@@ -2,7 +2,6 @@ import jspdf from 'jspdf'
 import axios from 'axios'
 import * as htmlToImage from 'html-to-image'
 import domToImage from 'dom-to-image'
-import { forEach } from 'lodash-es'
 
 type DownloadStatus = 'begin' | 'finish'
 
