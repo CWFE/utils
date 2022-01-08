@@ -121,7 +121,7 @@ const useGeneratePDF = (props: {
             const headerBottom = actualLength(headerEle.offsetTop - pageEle.offsetTop) + actualLength(headerEle?.clientHeight)
             positionTop = actualOffsetTop - (currentPage - 1) * pageSize.height + headerBottom * (currentPage - 1) + remainOffsetTop
         }
-        if (params.inTable && ele.nodeName === 'THEAD' && positionTop < acturalLength(headerEle?.clientHeight) + headerEleBottom) {
+        if (params.inTable && ele.nodeName === 'THEAD' && positionTop < actualLength(headerEle?.clientHeight) + headerEleBottom) {
             positionTop = actualLength(headerEle?.clientHeight) + headerEleBottom
         }
 
