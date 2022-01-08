@@ -121,7 +121,7 @@ const useGeneratePDF = (props: {
             const headerBottom = actualLength(headerEle.offsetTop - pageEle.offsetTop) + actualLength(headerEle?.clientHeight)
             positionTop = actualOffsetTop - (currentPage - 1) * pageSize.height + headerBottom * (currentPage - 1) + remainOffsetTop
         }
-        if (params.inTable && ele.nodeName === 'THEAD' && positionTop < 0) {
+        if (params.inTable && ele.nodeName === 'THEAD' && positionTop < acturalLength(headerEle?.clientHeight) + headerEleBottom) {
             positionTop = actualLength(headerEle?.clientHeight) + headerEleBottom
         }
 
@@ -158,7 +158,7 @@ const useGeneratePDF = (props: {
             totalHeight += footerEle?.clientHeight
         }
         if (params.inTable && ele.nodeName === 'THEAD') {
-            const firstBodyTr = params.currentTable.querySelector('tbody').querySelector('tr')
+            const firstBodyTr = params.currentTable.querySelector('tbody > tr')
             totalHeight += actualLength(firstBodyTr?.clientHeight)
 
             if (totalHeight > pageSize.height) {
