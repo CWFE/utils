@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import Axios, { AxiosRequestConfig } from 'axios'
 import { RequestInstance } from './request'
-import { usePersistFn } from 'ahooks'
+import { useMemoizedFn } from 'ahooks'
 
 interface UseRequestProps {
     params: AxiosRequestConfig
@@ -33,7 +33,7 @@ export function useRequest<T> ({
     const [loading, setLoading] = useState(false)
     const [err, setErr] = useState<Error>()
 
-    const loadData = usePersistFn(async (options?: Partial<UseRequestProps['params']>, retryCount?: number) => {
+    const loadData = useMemoizedFn(async (options?: Partial<UseRequestProps['params']>, retryCount?: number) => {
         setLoading(true)
         const realParams: UseRequestProps['params'] = Object.assign(options || {}, params || {})
         if (!realParams.url?.length) {

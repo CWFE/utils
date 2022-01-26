@@ -11,3 +11,9 @@ packages/utils/src
 .idea
 dist
 lerna-debug.log
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
