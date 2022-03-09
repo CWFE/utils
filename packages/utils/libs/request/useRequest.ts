@@ -78,10 +78,10 @@ export function useRequest<T> ({
     }, [RequestInstance.getCancelTokenKey(params)])
 
     return {
-        result: result,
+        result,
         setResult,
         loadData,
-        loading: loading,
-        err: err
+        loading,
+        err
     }
 }
